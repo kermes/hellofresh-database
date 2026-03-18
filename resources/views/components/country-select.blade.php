@@ -4,7 +4,7 @@
 @endphp
 
 <flux:select
-  variant="listbox"
+ 
   searchable
   clearable
   :label="__('Country')"

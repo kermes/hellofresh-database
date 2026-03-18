@@ -1,39 +1,10 @@
-<flux:footer id="site-footer" class="bg-zinc-50 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-700 print:hidden !py-4 text-sm mt-ui">
-  <div class="flex flex-col lg:flex-row items-center justify-between gap-ui">
-    <div class="flex items-center gap-ui max-lg:flex-col">
-      <flux:link :href="localized_route('localized.privacy-policy')" class="inline-flex items-center gap-1 hover:text-zinc-700 dark:hover:text-zinc-200">
-        <flux:icon.shield-check variant="micro" />
-        <span>{{ __('Privacy Policy') }}</span>
-      </flux:link>
-      <flux:link :href="localized_route('localized.terms-of-use')" class="inline-flex items-center gap-1 hover:text-zinc-700 dark:hover:text-zinc-200">
-        <flux:icon.file-text variant="micro" />
-        <span>{{ __('Terms of Use') }}</span>
-      </flux:link>
-      <flux:link href="https://github.com/Muetze42/hellofresh-database" target="_blank" class="inline-flex items-center gap-1 hover:text-zinc-700 dark:hover:text-zinc-200">
-        <flux:icon.github variant="micro" />
-        <span>GitHub</span>
-      </flux:link>
-      <flux:link :href="route('portal.dashboard')" class="inline-flex items-center gap-1 hover:text-zinc-700 dark:hover:text-zinc-200">
-        <flux:icon.boxes variant="micro" />
-        <span>{{ config('api.portal_name') }}</span>
-      </flux:link>
-    </div>
-    <div>
+<footer id="site-footer" class="bg-zinc-50 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-700 print:hidden py-4 text-sm mt-ui">
+  <div class="flex items-center justify-center px-4">
+    <div class="text-zinc-600 dark:text-zinc-400">
       {{ __('Made with') }} <span class="text-red-500">&hearts;</span> {{ __('by') }}
-      <flux:link href="https://huth.it" target="_blank" class="font-medium hover:text-zinc-700 dark:hover:text-zinc-200">
-        Norman Huth
-      </flux:link>
+      <a href="https://kermes.es" target="_blank" class="font-medium hover:text-zinc-700 dark:hover:text-zinc-200">kermes.es</a>,
+      {{ __('forked from') }}
+      <a href="https://huth.it" target="_blank" class="font-medium hover:text-zinc-700 dark:hover:text-zinc-200">Norman Huth</a>
     </div>
   </div>
-</flux:footer>
-<flux:footer class="not-print:hidden text-center">
-  <div>
-    <flux:link :href="config('app.url')">{{ config('app.name') }}</flux:link>
-  </div>
-  <div>
-    {{ __('Made with') }} <span class="text-red-500">&hearts;</span> {{ __('by') }}
-    <flux:link href="https://huth.it" target="_blank" class="font-medium hover:text-zinc-700 dark:hover:text-zinc-200">
-      Norman Huth
-    </flux:link>
-  </div>
-</flux:footer>
+</footer>

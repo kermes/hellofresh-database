@@ -3,10 +3,18 @@
 use App\Http\Controllers\OgImageController;
 use App\Http\Controllers\SitemapController;
 use App\Livewire\Actions\LogoutAction;
-use App\Livewire\Web\RegionSelect;
+use App\Models\Country;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', RegionSelect::class)->name('region.select');
+Route::get('/', function () {
+    $country = Country::active()->orderBy('code')->first();
+    $locale = $country->locales[0] ?? 'en';
+
+    return to_route('localized.recipes.index', [
+        'country' => $country,
+        'locale' => $locale,
+    ]);
+})->name('region.select');
 
 // Sitemap routes
 Route::get('sitemap.xml', [SitemapController::class, 'index'])->name('sitemap.index');

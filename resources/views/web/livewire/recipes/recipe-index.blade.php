@@ -1,11 +1,11 @@
-<flux:main class="space-y-section" container>
+<main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-section">
   <div class="flex flex-col gap-ui sm:flex-row sm:items-center sm:justify-between">
     {{-- Desktop: Title + Week selector --}}
     @if ($this->menuData)
       <div class="hidden sm:flex items-center gap-4">
         <flux:heading size="xl">{{ __('Menu') }}</flux:heading>
 
-        <flux:select wire:model.live="selectedMenuWeek" variant="listbox" size="sm">
+        <flux:select wire:model.live="selectedMenuWeek" size="sm">
           @foreach ($this->menuData['list'] as $menuItem)
             <flux:select.option wire:key="menu-desktop-{{ $menuItem['value'] }}" :value="$menuItem['value']">
               {{ $menuItem['start'] }} - {{ $menuItem['end'] }} {{ $menuItem['year'] }}
@@ -28,7 +28,7 @@
           clearable
         />
       </div>
-      <flux:select wire:model.live="sortBy" variant="listbox" size="sm" class="min-w-48">
+      <flux:select wire:model.live="sortBy" size="sm" class="min-w-48">
         @foreach (\App\Enums\RecipeSortEnum::cases() as $sortOption)
           <flux:select.option wire:key="sort-desktop-{{ $sortOption->value }}" :value="$sortOption->value">
             {{ $sortOption->label() }}
@@ -45,10 +45,14 @@
         </flux:button>
       </flux:modal.trigger>
 
-      <flux:tabs wire:model.live="viewMode" variant="segmented" size="sm">
-        <flux:tab :name="\App\Enums\ViewModeEnum::Grid->value" icon="squares-2x2">{{ __('Grid') }}</flux:tab>
-        <flux:tab :name="\App\Enums\ViewModeEnum::List->value" icon="list-bullet">{{ __('List') }}</flux:tab>
-      </flux:tabs>
+      <div class="inline-flex shrink-0 rounded-lg border border-zinc-200 dark:border-zinc-700 divide-x divide-zinc-200 dark:divide-zinc-700 overflow-hidden text-sm">
+        <button type="button" wire:click="$set('viewMode', '{{ \App\Enums\ViewModeEnum::Grid->value }}')" class="px-3 py-1.5 flex items-center gap-1.5 transition-colors rounded-l-lg {{ $viewMode === \App\Enums\ViewModeEnum::Grid->value ? 'bg-zinc-100 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100' : 'bg-white dark:bg-zinc-800 text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300' }}">
+          <flux:icon.layout-grid class="size-4" />{{ __('Grid') }}
+        </button>
+        <button type="button" wire:click="$set('viewMode', '{{ \App\Enums\ViewModeEnum::List->value }}')" class="px-3 py-1.5 flex items-center gap-1.5 transition-colors rounded-r-lg {{ $viewMode === \App\Enums\ViewModeEnum::List->value ? 'bg-zinc-100 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100' : 'bg-white dark:bg-zinc-800 text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300' }}">
+          <flux:icon.list class="size-4" />{{ __('List') }}
+        </button>
+      </div>
     </div>
   </div>
 
@@ -65,7 +69,7 @@
 
   {{-- Mobile: Sort left, Filter+View right --}}
   <div class="flex items-center gap-ui sm:hidden">
-    <flux:select wire:model.live="sortBy" variant="listbox" size="sm" class="min-w-0 flex-1">
+    <flux:select wire:model.live="sortBy" size="sm" class="min-w-0 flex-1">
       @foreach (\App\Enums\RecipeSortEnum::cases() as $sortOption)
         <flux:select.option wire:key="sort-mobile-{{ $sortOption->value }}" :value="$sortOption->value">
           {{ $sortOption->label() }}
@@ -83,17 +87,21 @@
         </flux:button>
       </flux:modal.trigger>
 
-      <flux:tabs wire:model.live="viewMode" variant="segmented" size="sm">
-        <flux:tab :name="\App\Enums\ViewModeEnum::Grid->value" icon="squares-2x2" />
-        <flux:tab :name="\App\Enums\ViewModeEnum::List->value" icon="list-bullet" />
-      </flux:tabs>
+      <div class="inline-flex shrink-0 rounded-lg border border-zinc-200 dark:border-zinc-700 divide-x divide-zinc-200 dark:divide-zinc-700 overflow-hidden">
+        <button type="button" wire:click="$set('viewMode', '{{ \App\Enums\ViewModeEnum::Grid->value }}')" class="p-1.5 flex items-center transition-colors rounded-l-lg {{ $viewMode === \App\Enums\ViewModeEnum::Grid->value ? 'bg-zinc-100 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100' : 'bg-white dark:bg-zinc-800 text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300' }}">
+          <flux:icon.layout-grid class="size-4" />
+        </button>
+        <button type="button" wire:click="$set('viewMode', '{{ \App\Enums\ViewModeEnum::List->value }}')" class="p-1.5 flex items-center transition-colors rounded-r-lg {{ $viewMode === \App\Enums\ViewModeEnum::List->value ? 'bg-zinc-100 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100' : 'bg-white dark:bg-zinc-800 text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300' }}">
+          <flux:icon.list class="size-4" />
+        </button>
+      </div>
     </div>
   </div>
 
   {{-- Mobile Menu: Week selector in second row --}}
   @if ($this->menuData)
     <div class="sm:hidden">
-      <flux:select wire:model.live="selectedMenuWeek" variant="listbox" size="sm" class="w-full">
+      <flux:select wire:model.live="selectedMenuWeek" size="sm" class="w-full">
         @foreach ($this->menuData['list'] as $menuItem)
           <flux:select.option wire:key="menu-mobile-{{ $menuItem['value'] }}" :value="$menuItem['value']">
             {{ $menuItem['start'] }} - {{ $menuItem['end'] }} · {{ $menuItem['year'] }}
@@ -171,4 +179,4 @@
       </div>
     </flux:modal>
   @endif
-</flux:main>
+</main>

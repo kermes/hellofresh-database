@@ -58,42 +58,4 @@ return [
 
     'rate_limit' => env('API_RATE_LIMIT', 60),
 
-    /*
-    |--------------------------------------------------------------------------
-    | API Portal Domain Name
-    |--------------------------------------------------------------------------
-    |
-    | This value specifies the domain name for the API Portal. The portal
-    | provides API documentation, token management, and authentication
-    | for API consumers on a dedicated subdomain.
-    |
-    */
-
-    'portal_domain_name' => env('API_PORTAL_DOMAIN_NAME'),
-
-    /*
-    |--------------------------------------------------------------------------
-    | API Version
-    |--------------------------------------------------------------------------
-    |
-    | This value represents the current version of the API. It is displayed
-    | in the API Portal footer and can be used to track API releases and
-    | communicate version information to API consumers.
-    |
-    */
-
-    'version' => (string) env('API_VERSION', '') !== '' ? env('API_VERSION') : 'unknown',
-
-    /*
-    |--------------------------------------------------------------------------
-    | API Portal Name
-    |--------------------------------------------------------------------------
-    |
-    | This value defines the display name for the API Portal. It is shown
-    | in the portal navigation, page titles, and other UI elements where
-    | the portal name is displayed to users.
-    |
-    */
-
-    'portal_name' => env('API_PORTAL_NAME', 'API + Data Portal'),
 ];

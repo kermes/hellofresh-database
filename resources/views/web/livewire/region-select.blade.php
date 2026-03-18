@@ -1,4 +1,4 @@
-<flux:main container>
+<main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
   <div class="flex flex-col items-center justify-center gap-section max-w-4xl mx-auto">
     <flux:heading size="xl" class="flex items-center gap-ui/2 justify-center">
       <flux:icon.hellofresh class="text-accent" />
@@ -39,4 +39,4 @@
       @endforeach
     </div>
   </div>
-</flux:main>
+</main>

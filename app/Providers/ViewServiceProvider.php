@@ -25,9 +25,5 @@ class ViewServiceProvider extends ServiceProvider
             base_path('vendor/livewire/flux/stubs/resources/views/flux'),
             'flux-vendor'
         );
-        Blade::anonymousComponentPath(
-            base_path('vendor/livewire/flux-pro/stubs/resources/views/flux'),
-            'flux-vendor'
-        );
     }
 }

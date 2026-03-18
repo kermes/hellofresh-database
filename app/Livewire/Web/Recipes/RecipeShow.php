@@ -135,6 +135,7 @@ class RecipeShow extends AbstractComponent
 
         // Build a map of hellofresh_id => Ingredient for lookup
         // The hellofresh_ids column is a jsonb array, so we need to map each ID to its ingredient
+        // Also maps db-{id} for manually-managed recipes that have no HelloFresh IDs
         $ingredientMap = collect();
         foreach ($this->recipe->ingredients as $ingredient) {
             /** @var list<string>|null $hellofreshIds */
@@ -144,6 +145,8 @@ class RecipeShow extends AbstractComponent
                     $ingredientMap->put($hellofreshId, $ingredient);
                 }
             }
+
+            $ingredientMap->put('db-' . $ingredient->id, $ingredient);
         }
 
         $ingredients = $selectedYieldData['ingredients'] ?? [];

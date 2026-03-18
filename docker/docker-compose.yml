@@ -1,0 +1,151 @@
+# ============================================================
+# HelloFresh Database – Docker Compose (development)
+# ============================================================
+#
+# Quick start:
+#   1. cp .env.example .env
+#   2. Update .env with the Docker-specific values below:
+#        APP_URL=http://localhost
+#        DB_HOST=postgres
+#        REDIS_HOST=redis
+#        REVERB_HOST=0.0.0.0   (optional – only if using Reverb)
+#        REVERB_PORT=8080
+#        REVERB_SCHEME=http
+#   3. docker compose build
+#   4. docker compose up -d
+#   5. docker compose exec app php artisan key:generate
+#   6. docker compose exec app php artisan migrate --seed
+#   7. docker compose exec app pnpm install && pnpm run build
+#          (or: npm install && npm run build)
+#
+# Optional /etc/hosts entries for domain-based routing:
+#   127.0.0.1  hfresh.test api.hfresh.test console.hfresh.test
+# ============================================================
+
+services:
+
+  # ── PHP-FPM application ──────────────────────────────────
+  app:
+    build:
+      context: ..
+      dockerfile: docker/php/Dockerfile
+    container_name: hfresh_app
+    restart: unless-stopped
+    volumes:
+      - ..:/var/www/html
+      # Preserve directories built inside the image (not on the host)
+      - hfresh_vendor:/var/www/html/vendor
+      - hfresh_public_build:/var/www/html/public/build
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - hellofresh
+
+  # ── Nginx web server ─────────────────────────────────────
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: hfresh_nginx
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-80}:80"
+    volumes:
+      - ..:/var/www/html
+      - hfresh_vendor:/var/www/html/vendor
+      - hfresh_public_build:/var/www/html/public/build
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app
+    networks:
+      - hellofresh
+
+  # ── PostgreSQL database ──────────────────────────────────
+  postgres:
+    image: postgres:17-alpine
+    container_name: hfresh_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: "${DB_DATABASE:-laravel}"
+      POSTGRES_USER: "${DB_USERNAME:-forge}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD:-forge}"
+    volumes:
+      - hfresh_postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-forge} -d ${DB_DATABASE:-laravel}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - hellofresh
+
+  # ── Redis (cache + queues) ───────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: hfresh_redis
+    restart: unless-stopped
+    volumes:
+      - hfresh_redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - hellofresh
+
+  # ── Laravel Horizon (queue worker) ───────────────────────
+  horizon:
+    build:
+      context: ..
+      dockerfile: docker/php/Dockerfile
+    container_name: hfresh_horizon
+    entrypoint: []
+    command: php artisan horizon
+    restart: unless-stopped
+    volumes:
+      - ..:/var/www/html
+      - hfresh_vendor:/var/www/html/vendor
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - hellofresh
+
+  # ── Laravel Scheduler ────────────────────────────────────
+  scheduler:
+    build:
+      context: ..
+      dockerfile: docker/php/Dockerfile
+    container_name: hfresh_scheduler
+    entrypoint: []
+    command: php artisan schedule:work
+    restart: unless-stopped
+    volumes:
+      - ..:/var/www/html
+      - hfresh_vendor:/var/www/html/vendor
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - hellofresh
+
+
+volumes:
+  hfresh_postgres_data:
+  hfresh_redis_data:
+  hfresh_vendor:
+  hfresh_public_build:
+
+networks:
+  hellofresh:
+    driver: bridge

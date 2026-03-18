@@ -56,6 +56,8 @@ class RecipeIndex extends AbstractComponent
     /** @deprecated Legacy property - no longer used */
     public bool $filterShowCanonical = false;
 
+    public string $allergenSearch = '';
+
     /** @var array<int> */
     public array $excludedAllergenIds = [];
 
@@ -72,16 +74,34 @@ class RecipeIndex extends AbstractComponent
     public string $excludedIngredientSearch = '';
 
     /** @var array<int> */
+    public array $labelIds = [];
+
+    public string $labelSearch = '';
+
+    /** @var array<int> */
+    public array $excludedLabelIds = [];
+
+    public string $excludedLabelSearch = '';
+
+    /** @var array<int> */
     public array $tagIds = [];
+
+    public string $tagSearch = '';
 
     /** @var array<int> */
     public array $excludedTagIds = [];
 
-    /** @var array<int> */
-    public array $labelIds = [];
+    public string $excludedTagSearch = '';
 
     /** @var array<int> */
-    public array $excludedLabelIds = [];
+    public array $utensilIds = [];
+
+    public string $utensilSearch = '';
+
+    /** @var array<int> */
+    public array $excludedUtensilIds = [];
+
+    public string $excludedUtensilSearch = '';
 
     /** @var array<int> */
     public array $difficultyLevels = [];
@@ -121,10 +141,12 @@ class RecipeIndex extends AbstractComponent
         $this->ingredientIds = session($this->filterSessionKey('ingredients'), []);
         $this->ingredientMatchMode = session($this->filterSessionKey('ingredient_match'), IngredientMatchModeEnum::Any->value);
         $this->excludedIngredientIds = session($this->filterSessionKey('excluded_ingredients'), []);
-        $this->tagIds = session($this->filterSessionKey('tags'), []);
-        $this->excludedTagIds = session($this->filterSessionKey('excluded_tags'), []);
         $this->labelIds = session($this->filterSessionKey('labels'), []);
         $this->excludedLabelIds = session($this->filterSessionKey('excluded_labels'), []);
+        $this->tagIds = session($this->filterSessionKey('tags'), []);
+        $this->excludedTagIds = session($this->filterSessionKey('excluded_tags'), []);
+        $this->utensilIds = session($this->filterSessionKey('utensils'), []);
+        $this->excludedUtensilIds = session($this->filterSessionKey('excluded_utensils'), []);
         $this->difficultyLevels = session($this->filterSessionKey('difficulty'), []);
         $this->prepTimeRange = session($this->filterSessionKey('prep_time'), $this->getDefaultPrepTimeRange());
         $this->totalTimeRange = session($this->filterSessionKey('total_time'), $this->getDefaultTotalTimeRange());
@@ -310,10 +332,12 @@ class RecipeIndex extends AbstractComponent
             'ingredientIds' => 'ingredients',
             'ingredientMatchMode' => 'ingredient_match',
             'excludedIngredientIds' => 'excluded_ingredients',
-            'tagIds' => 'tags',
-            'excludedTagIds' => 'excluded_tags',
             'labelIds' => 'labels',
             'excludedLabelIds' => 'excluded_labels',
+            'tagIds' => 'tags',
+            'excludedTagIds' => 'excluded_tags',
+            'utensilIds' => 'utensils',
+            'excludedUtensilIds' => 'excluded_utensils',
             'difficultyLevels' => 'difficulty',
             'prepTimeRange' => 'prep_time',
             'totalTimeRange' => 'total_time',
@@ -331,10 +355,12 @@ class RecipeIndex extends AbstractComponent
             + (int) ($this->excludedAllergenIds !== [])
             + (int) ($this->ingredientIds !== [])
             + (int) ($this->excludedIngredientIds !== [])
-            + (int) ($this->tagIds !== [])
-            + (int) ($this->excludedTagIds !== [])
             + (int) ($this->labelIds !== [])
             + (int) ($this->excludedLabelIds !== [])
+            + (int) ($this->tagIds !== [])
+            + (int) ($this->excludedTagIds !== [])
+            + (int) ($this->utensilIds !== [])
+            + (int) ($this->excludedUtensilIds !== [])
             + (int) ($this->difficultyLevels !== [])
             + (int) $this->isPrepTimeFilterActive()
             + (int) $this->isTotalTimeFilterActive();
@@ -373,14 +399,17 @@ class RecipeIndex extends AbstractComponent
     {
         $this->filterHasPdf = false;
         $this->filterOnlyPublished = false;
+        $this->allergenSearch = '';
         $this->excludedAllergenIds = [];
         $this->ingredientIds = [];
         $this->ingredientMatchMode = IngredientMatchModeEnum::Any->value;
         $this->excludedIngredientIds = [];
-        $this->tagIds = [];
-        $this->excludedTagIds = [];
         $this->labelIds = [];
         $this->excludedLabelIds = [];
+        $this->tagIds = [];
+        $this->excludedTagIds = [];
+        $this->utensilIds = [];
+        $this->excludedUtensilIds = [];
         $this->difficultyLevels = [];
         $this->prepTimeRange = $this->getDefaultPrepTimeRange();
         $this->totalTimeRange = $this->getDefaultTotalTimeRange();
@@ -392,10 +421,12 @@ class RecipeIndex extends AbstractComponent
             $this->filterSessionKey('ingredients'),
             $this->filterSessionKey('ingredient_match'),
             $this->filterSessionKey('excluded_ingredients'),
-            $this->filterSessionKey('tags'),
-            $this->filterSessionKey('excluded_tags'),
             $this->filterSessionKey('labels'),
             $this->filterSessionKey('excluded_labels'),
+            $this->filterSessionKey('tags'),
+            $this->filterSessionKey('excluded_tags'),
+            $this->filterSessionKey('utensils'),
+            $this->filterSessionKey('excluded_utensils'),
             $this->filterSessionKey('difficulty'),
             $this->filterSessionKey('prep_time'),
             $this->filterSessionKey('total_time'),
@@ -427,6 +458,8 @@ class RecipeIndex extends AbstractComponent
                 'ingredients',
                 fn (Builder $ingredientQuery) => $ingredientQuery->whereIn('ingredients.id', $this->excludedIngredientIds)
             ))
+            ->when($this->labelIds !== [], fn (Builder $query) => $query->whereIn('label_id', $this->labelIds))
+            ->when($this->excludedLabelIds !== [], fn (Builder $query) => $query->whereNotIn('label_id', $this->excludedLabelIds))
             ->when($this->tagIds !== [], fn (Builder $query) => $query->whereHas(
                 'tags',
                 fn (Builder $tagQuery) => $tagQuery->whereIn('tags.id', $this->tagIds)
@@ -435,8 +468,14 @@ class RecipeIndex extends AbstractComponent
                 'tags',
                 fn (Builder $tagQuery) => $tagQuery->whereIn('tags.id', $this->excludedTagIds)
             ))
-            ->when($this->labelIds !== [], fn (Builder $query) => $query->whereIn('label_id', $this->labelIds))
-            ->when($this->excludedLabelIds !== [], fn (Builder $query) => $query->whereNotIn('label_id', $this->excludedLabelIds))
+            ->when($this->utensilIds !== [], fn (Builder $query) => $query->whereHas(
+                'utensils',
+                fn (Builder $utensilQuery) => $utensilQuery->whereIn('utensils.id', $this->utensilIds)
+            ))
+            ->when($this->excludedUtensilIds !== [], fn (Builder $query) => $query->whereDoesntHave(
+                'utensils',
+                fn (Builder $utensilQuery) => $utensilQuery->whereIn('utensils.id', $this->excludedUtensilIds)
+            ))
             ->when($this->difficultyLevels !== [], fn (Builder $query) => $query->whereIn('difficulty', $this->difficultyLevels))
             ->when($this->isPrepTimeFilterActive(), fn (Builder $query): Builder => $this->applyPrepTimeFilter($query))
             ->when($this->isTotalTimeFilterActive(), fn (Builder $query): Builder => $this->applyTotalTimeFilter($query))

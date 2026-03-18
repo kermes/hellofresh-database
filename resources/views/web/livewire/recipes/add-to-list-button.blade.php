@@ -17,24 +17,28 @@
       <flux:heading size="lg">{{ __('Add to List') }}</flux:heading>
 
       @if($isModalOpen)
-        <flux:pillbox wire:model="selectedLists" variant="combobox" multiple :filter="false" :placeholder="__('Select lists...')">
-          <x-slot name="input">
-            <flux:pillbox.input wire:model.live="search" :placeholder="__('Search or create list...')" />
-          </x-slot>
+        <flux:input wire:model.live="search" :placeholder="__('Search or create list...')" clearable />
 
-          @foreach($this->lists as $list)
-            <flux:pillbox.option wire:key="list-{{ $list->id }}" :value="$list->id">
-              {{ $list->name }}
+        <div class="max-h-60 overflow-y-auto rounded-lg border border-zinc-200 dark:border-zinc-700 divide-y divide-zinc-100 dark:divide-zinc-800">
+          @forelse($this->lists as $list)
+            <label wire:key="list-{{ $list->id }}" class="flex items-center gap-2 px-3 py-2 text-sm hover:bg-zinc-50 dark:hover:bg-zinc-700/50 cursor-pointer">
+              <input type="checkbox" wire:model="selectedLists" value="{{ $list->id }}" class="rounded border-zinc-300 dark:border-zinc-600">
+              <span>{{ $list->name }}</span>
               @if($list->user_id !== auth()->id())
                 <span class="text-zinc-400 text-xs">({{ $list->user->name }})</span>
               @endif
-            </flux:pillbox.option>
-          @endforeach
+            </label>
+          @empty
+            <p class="px-3 py-2 text-sm text-zinc-500">{{ __('No lists found.') }}</p>
+          @endforelse
+        </div>
 
-          <flux:pillbox.option.create wire:click="createList" min-length="2">
-            {{ __('Create New List') }}: "<span wire:text="search"></span>"
-          </flux:pillbox.option.create>
-        </flux:pillbox>
+        @if(strlen($search) >= 2)
+          <button type="button" wire:click="createList" class="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100">
+            <flux:icon.plus class="size-4" />
+            {{ __('Create New List') }}: "{{ $search }}"
+          </button>
+        @endif
 
         <div class="flex justify-end pt-section">
           <flux:button wire:click="saveLists" variant="primary">{{ __('Save') }}</flux:button>

@@ -39,11 +39,7 @@
 </head>
 <body class="min-h-screen bg-white dark:bg-zinc-800 antialiased">
 {{ $slot }}
-@persist('toast')
-<flux:toast.group position="bottom end">
-    <flux:toast />
-</flux:toast.group>
-@endpersist
+<x-ui.toast />
 @vite(['resources/js/web/app.js'])
 @livewireScripts
 @fluxScripts

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Concerns\ActivatableTrait;
 use App\Models\Concerns\HasHandlesTrait;
 use App\Models\Concerns\LogsModificationsTrait;
+use App\Models\Concerns\SearchableByNameTrait;
 use Database\Factories\LabelFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -26,6 +27,7 @@ class Label extends Model
     use HasHandlesTrait;
     use HasTranslations;
     use LogsModificationsTrait;
+    use SearchableByNameTrait;
 
     /**
      * The attributes that are translatable.

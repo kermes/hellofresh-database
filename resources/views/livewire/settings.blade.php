@@ -1,4 +1,4 @@
-<flux:main container class="max-w-xl lg:max-w-3xl">
+<main class="mx-auto max-w-xl lg:max-w-3xl px-4 sm:px-6 lg:px-8">
   <flux:heading size="xl">{{ __('Settings') }}</flux:heading>
 
   <flux:separator variant="subtle" class="my-8" />
@@ -8,7 +8,7 @@
     <div class="flex flex-col lg:flex-row gap-4 lg:gap-6">
       <div class="lg:w-80">
         <flux:heading size="lg">{{ __('Profile Information') }}</flux:heading>
-        <flux:subheading>{{ __("Update your account's profile information and email address.") }}</flux:subheading>
+        <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{{ __("Update your account's profile information and email address.") }}</p>
       </div>
 
       <div class="flex-1 space-y-section">
@@ -45,7 +45,7 @@
     <div class="flex flex-col lg:flex-row gap-4 lg:gap-6">
       <div class="lg:w-80">
         <flux:heading size="lg">{{ __('Avatar') }}</flux:heading>
-        <flux:subheading>{{ __('Upload a profile picture. Image must be square and between 200x200 and 1000x1000 pixels.') }}</flux:subheading>
+        <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{{ __('Upload a profile picture. Image must be square and between 200x200 and 1000x1000 pixels.') }}</p>
       </div>
 
       <div class="flex-1 space-y-ui">
@@ -63,25 +63,37 @@
           @endif
         </div>
 
-        <flux:file-upload wire:model="avatar" :label="__('Upload new avatar')">
-          <flux:file-upload.dropzone
-            :heading="__('Drop image here or click to browse')"
-            :text="__('JPG up to 2MB (200x200 - 1000x1000px, square)')"
-            inline
-            with-progress
-          />
-        </flux:file-upload>
+        <div>
+          <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">{{ __('Upload new avatar') }}</label>
+          <div class="rounded-lg border-2 border-dashed border-zinc-300 dark:border-zinc-600 p-6 text-center">
+            <p class="text-sm text-zinc-500 dark:text-zinc-400">{{ __('Drop image here or click to browse') }}</p>
+            <p class="mt-1 text-xs text-zinc-400 dark:text-zinc-500">{{ __('JPG up to 2MB (200x200 - 1000x1000px, square)') }}</p>
+            <input
+              type="file"
+              wire:model="avatar"
+              accept="image/jpeg,image/png,image/gif,image/webp"
+              class="mt-3 block w-full text-sm text-zinc-500 file:mr-3 file:rounded-md file:border-0 file:bg-zinc-100 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-zinc-700 hover:file:bg-zinc-200 dark:file:bg-zinc-700 dark:file:text-zinc-300 dark:hover:file:bg-zinc-600"
+            />
+          </div>
+        </div>
 
         @if($avatar)
-          <flux:file-item
+          <x-ui.file-item
             :heading="$avatar->getClientOriginalName()"
             :image="$avatar->isPreviewable() ? $avatar->temporaryUrl() : null"
             :size="$avatar->getSize()"
           >
             <x-slot name="actions">
-              <flux:file-item.remove wire:click="cancelAvatarUpload" :aria-label="__('Remove file')" />
+              <button
+                type="button"
+                wire:click="cancelAvatarUpload"
+                :aria-label="__('Remove file')"
+                class="rounded p-1 text-zinc-400 hover:text-red-500 hover:bg-zinc-100 dark:hover:bg-zinc-700"
+              >
+                <flux:icon.x class="size-4" />
+              </button>
             </x-slot>
-          </flux:file-item>
+          </x-ui.file-item>
 
           <div class="flex justify-end gap-ui">
             <flux:button type="button" wire:click="cancelAvatarUpload">
@@ -103,7 +115,7 @@
     <div class="flex flex-col lg:flex-row gap-4 lg:gap-6">
       <div class="lg:w-80">
         <flux:heading size="lg">{{ __('Update Password') }}</flux:heading>
-        <flux:subheading>{{ __('Ensure your account is using a long, random password to stay secure.') }}</flux:subheading>
+        <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{{ __('Ensure your account is using a long, random password to stay secure.') }}</p>
       </div>
 
       <div class="flex-1 space-y-section">
@@ -146,14 +158,14 @@
   <div class="flex flex-col lg:flex-row gap-4 lg:gap-6 pb-10">
     <div class="lg:w-80">
       <flux:heading size="lg">{{ __('Support') }}</flux:heading>
-      <flux:subheading>{{ __('Information for support requests.') }}</flux:subheading>
+      <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{{ __('Information for support requests.') }}</p>
     </div>
 
     <div class="flex-1">
       <flux:field>
-        <flux:label>{{ __('Your User ID for support requests:') }}</flux:label>
+        <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">{{ __('Your User ID for support requests:') }}</label>
         <flux:input icon="hash" :value="auth()->id()" readonly copyable />
       </flux:field>
     </div>
   </div>
-</flux:main>
+</main>

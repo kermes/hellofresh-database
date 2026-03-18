@@ -6,8 +6,6 @@ use App\Http\Middleware\Auth\EnsureUserIsAdminMiddleware;
 use App\Http\Middleware\Context\RequestContextMiddleware;
 use App\Http\Middleware\Localization\ApiLocalizationMiddleware;
 use App\Http\Middleware\Localization\LocalizationMiddleware;
-use App\Http\Middleware\LogUserActivityMiddleware;
-use App\Http\Middleware\PortalMiddleware;
 use App\Http\Middleware\PreventRequestsDuringMaintenanceMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -29,10 +27,8 @@ return Application::configure(basePath: dirname(__DIR__))
             Route::middleware([
                 'api',
                 'throttle:api',
-                'auth:sanctum',
                 RequestContextMiddleware::class,
                 EnsureEmailIsVerifiedMiddleware::class,
-                LogUserActivityMiddleware::class,
             ])
                 ->prefix(config('api.path'))
                 ->domain(config('api.domain_name'))
@@ -42,41 +38,23 @@ return Application::configure(basePath: dirname(__DIR__))
             Route::middleware([
                 'api',
                 'throttle:api',
-                'auth:sanctum',
                 RequestContextMiddleware::class,
                 EnsureEmailIsVerifiedMiddleware::class,
                 ApiLocalizationMiddleware::class,
-                LogUserActivityMiddleware::class,
             ])
                 ->domain(config('api.domain_name'))
                 ->prefix('{locale}-{country}')
                 ->name('api-localized.')
                 ->group(base_path('routes/api-localized.php'));
 
-            Route::middleware(['web', LocalizationMiddleware::class, LogUserActivityMiddleware::class])
+            Route::middleware(['web', LocalizationMiddleware::class])
                 ->domain((string) parse_url((string) config('app.url'), PHP_URL_HOST))
                 ->name('localized.')
                 ->prefix('{locale}-{country:code}')
                 ->group(base_path('routes/web-localized.php'));
-
-            Route::middleware([
-                'web',
-                LogUserActivityMiddleware::class,
-                PortalMiddleware::class,
-            ])
-                ->domain(config('api.portal_domain_name'))
-                ->name('portal.')
-                ->group(base_path('routes/portal.php'));
         }
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->redirectGuestsTo(function (Request $request): ?string {
-            if ($request->getHost() === config('api.portal_domain_name')) {
-                return route('portal.login');
-            }
-
-            return null;
-        });
         $middleware->replace(
             PreventRequestsDuringMaintenance::class,
             PreventRequestsDuringMaintenanceMiddleware::class

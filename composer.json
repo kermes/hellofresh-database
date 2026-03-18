@@ -27,12 +27,7 @@
         "tailwindcss"
     ],
     "license": "MIT",
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://composer.fluxui.dev"
-        }
-    ],
+    "repositories": [],
     "require": {
         "php": "^8.4",
         "ext-dom": "*",
@@ -41,9 +36,8 @@
         "laravel/horizon": "^5.43",
         "laravel/pulse": "^1.5",
         "laravel/reverb": "^1.7",
-        "laravel/sanctum": "^4.2",
         "laravel/tinker": "^2.11",
-        "livewire/flux-pro": "^2.11",
+        "livewire/flux": "^2.11",
         "norman-huth/gd-text": "^1.0",
         "sentry/sentry-laravel": "^4.20",
         "spatie/laravel-activitylog": "^4.10",

@@ -3,6 +3,7 @@
     'ogTitle' => null,
     'ogDescription' => null,
     'ogImage' => null,
+    'bare' => false,
 ])
   <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}-{{ resolve('current.country')->code }}">
@@ -36,18 +37,20 @@
   @livewireStyles
   @fluxAppearance
 </head>
-<body class="min-h-screen bg-white dark:bg-zinc-800 antialiased print:bg-white" data-country="{{ resolve('current.country')->code }}">
-<x-web::layouts.localized.header />
-{{ $slot }}
-<x-web::layouts.localized.footer />
+<body class="min-h-screen flex flex-col bg-white dark:bg-zinc-800 antialiased print:bg-white" data-country="{{ resolve('current.country')->code }}">
+@unless($bare)
+  <x-web::layouts.localized.header />
+@endunless
+<div class="grow py-section">
+  {{ $slot }}
+</div>
+@unless($bare)
+  <x-web::layouts.localized.footer />
+@endunless
 <x-confirmation-modal />
 <livewire:web.global-search />
 <livewire:web.auth.auth-modal />
-@persist('toast')
-<flux:toast.group position="bottom end">
-  <flux:toast />
-</flux:toast.group>
-@endpersist
+<x-ui.toast />
 {{-- Mini Shopping List Floating Button (hidden on shopping list page) --}}
 @unless(request()->routeIs('localized.shopping-list.*'))
   <div
@@ -60,7 +63,7 @@
     "
     x-show="$store.shoppingList && $store.shoppingList.count > 0"
     x-cloak
-    class="fixed right-4 sm:right-6 bottom-4 sm:bottom-6 z-50 sm:transition-transform sm:duration-300 sm:ease-out"
+    class="fixed right-4 sm:right-6 bottom-4 sm:bottom-6 z-50 sm:transition-transform sm:duration-300 sm:ease-out print:hidden"
     :class="footerVisible ? 'sm:-translate-y-6' : 'sm:translate-y-0'"
   >
     <button

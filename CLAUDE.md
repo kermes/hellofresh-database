@@ -2,6 +2,10 @@
 
 These guidelines are maintained separately from Laravel Boost and will persist across updates.
 
+## Environment
+
+- The application runs in Docker (`docker/docker-compose.yml`). The vendor directory is a named Docker volume and does not exist on the host filesystem. Artisan commands must be run inside the container: `docker compose exec app php artisan ...`.
+
 ## PHP
 
 ### Enums Location
@@ -127,15 +131,13 @@ The Laravel Boost guidelines are specifically curated by Laravel maintainers for
 ## Foundational Context
 This application is a Laravel application and its main Laravel ecosystems package & versions are below. You are an expert with them all. Ensure you abide by these specific packages & versions.
 
-- php - 8.4.17
+- php - 8.4.19
 - laravel/framework (LARAVEL) - v12
 - laravel/horizon (HORIZON) - v5
 - laravel/prompts (PROMPTS) - v0
 - laravel/pulse (PULSE) - v1
 - laravel/reverb (REVERB) - v1
-- laravel/sanctum (SANCTUM) - v4
 - livewire/flux (FLUXUI_FREE) - v2
-- livewire/flux-pro (FLUXUI_PRO) - v2
 - livewire/livewire (LIVEWIRE) - v4
 - larastan/larastan (LARASTAN) - v3
 - laravel/mcp (MCP) - v0
@@ -262,7 +264,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - Use queued jobs for time-consuming operations with the `ShouldQueue` interface.
 
 ### Authentication & Authorization
-- Use Laravel's built-in authentication and authorization features (gates, policies, Sanctum, etc.).
+- Use Laravel's built-in authentication and authorization features (gates, policies, etc.).
 
 ### URL Generation
 - When generating links to other pages, prefer named routes and the `route()` function.
@@ -300,11 +302,11 @@ protected function isAccessible(User $user, ?string $path = null): bool
 ### Models
 - Casts can and likely should be set in a `casts()` method on a model rather than the `$casts` property. Follow existing conventions from other models.
 
-=== fluxui-pro/core rules ===
+=== fluxui-free/core rules ===
 
-## Flux UI Pro
+## Flux UI Free
 
-- This project is using the Pro version of Flux UI. It has full access to the free components and variants, as well as full access to the Pro components and variants.
+- This project is using the free edition of Flux UI. It has full access to the free components and variants, but does not have access to the Pro components.
 - Flux UI is a component library for Livewire. Flux is a robust, hand-crafted UI component library for your Livewire applications. It's built using Tailwind CSS and provides a set of components that are easy to use and customize.
 - You should use Flux UI components when available.
 - Fallback to standard Blade components if Flux is unavailable.
@@ -319,7 +321,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 This is correct as of Boost installation, but there may be additional components within the codebase.
 
 <available-flux-components>
-accordion, autocomplete, avatar, badge, brand, breadcrumbs, button, calendar, callout, card, chart, checkbox, command, composer, context, date-picker, dropdown, editor, field, file-upload, heading, icon, input, kanban, modal, navbar, otp-input, pagination, pillbox, popover, profile, radio, select, separator, skeleton, slider, switch, table, tabs, text, textarea, time-picker, toast, tooltip
+avatar, badge, brand, breadcrumbs, button, callout, checkbox, dropdown, field, heading, icon, input, modal, navbar, otp-input, profile, radio, select, separator, skeleton, switch, text, textarea, tooltip
 </available-flux-components>
 
 === livewire/core rules ===
@@ -463,4 +465,46 @@ accordion, autocomplete, avatar, badge, brand, breadcrumbs, button, calendar, ca
 - Use the custom spacing size `ui` instead of 2 (`p-2`, `space-y-2`, `gap-2` etc)
 - Use the custom spacing size `section` instead of 6 (`p-6`, `space-y-6`, `gap-6` etc)
 - Always use Lucide icons instead of Heroicons. You can publish missing Lucide icons using `php artisan flux:icon icon-name`
+
+## Flux Pro — No License
+
+This project does NOT have a Flux Pro license. The `livewire/flux-pro` package is listed in `composer.json` but is not installed in the vendor directory. All Pro-only components have been replaced with plain HTML + Tailwind CSS + Alpine.js equivalents.
+
+### Pro components that have been replaced
+
+| Pro component | Replacement |
+|---|---|
+| `flux:main` | `<main>` with equivalent Tailwind classes |
+| `flux:header` | `<header>` with sticky/z-index classes |
+| `flux:footer` | `<footer>` |
+| `flux:spacer` | `<div class="grow"></div>` |
+| `flux:link` | `<a>` with hover classes |
+| `flux:label` | `<label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">` |
+| `flux:error name="x"` | `@error('x') <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror` |
+| `flux:subheading` | `<p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">` |
+| `flux:menu` | `<div class="min-w-[10rem] rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 shadow-sm py-1">` |
+| `flux:menu.item` | `<a>`/`<button>` with `flex items-center gap-2 px-3 py-1.5 text-sm ...` |
+| `flux:menu.separator` | `<div class="my-1 border-t border-zinc-200 dark:border-zinc-700">` |
+| `flux:sidebar` and all sub-components | Custom Alpine.js sidebar in layouts |
+| `flux:toast` / `flux:toast.group` | `<x-ui.toast />` — custom Alpine.js component at `resources/views/components/ui/toast.blade.php` |
+| `flux:file-item` | `<x-ui.file-item />` — custom component at `resources/views/components/ui/file-item.blade.php` |
+| `flux:tabs` / `flux:tab` | Segmented button group using `wire:click="$set('viewMode', '...')"` + Blade conditional classes |
+| `flux:select variant="listbox"` | `flux:select` without the `variant` attribute (falls back to native HTML select) |
+| `flux:option` | Plain `<option>` HTML tag inside `flux:select` |
+| `flux:slider` | Two `<flux:input type="number">` side by side for min/max |
+| `flux:pillbox` | Search `<flux:input>` + scrollable `<div>` with `<label><input type="checkbox">` rows |
+
+### flux:menu IS free — always use it inside flux:dropdown
+`flux:menu`, `flux:menu.item`, `flux:menu.heading`, `flux:menu.separator`, `flux:menu.checkbox` are all **free**. Always use them as the direct child of `flux:dropdown`. Never replace them with a raw `<div>` — Flux's JS needs the `[popover]` element that `flux:menu` renders.
+
+### Alpine bindings inside Blade components
+Use `x-bind:class` (not `:class`) when the expression uses Alpine magic like `$flux` or `$store`. Blade treats `:class` as a PHP expression and will throw "Undefined constant" errors on Alpine-style property access.
+
+### Do NOT use these Pro components
+Never introduce any of the Pro components listed above. Always use the replacements documented here. If you need a new toast, use `Flux::toast()` (the PHP helper is free) — the `<x-ui.toast />` component already listens to the `toast-show` Livewire event it dispatches.
+
+### Icons
+- Use `<flux:icon.name />` syntax (e.g. `<flux:icon.bars-2 />`) — NOT `<x-lucide-name />`.
+- Icons are published as Blade files in `resources/views/flux/icon/`.
+- Publish missing icons with: `php artisan flux:icon icon-name` (uses Lucide source).
 </project-guidelines>

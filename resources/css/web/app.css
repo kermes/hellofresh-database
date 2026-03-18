@@ -14,3 +14,449 @@
 @source '../../../resources/web/*.blade.php';
 @source '../../../resources/livewire/*.blade.php';
 @source '../../resources/js/web/*.js';
+
+/* Hide dialogs that are not open — ensures closed modals don't affect layout on
+   browsers without native <dialog> support (e.g. older iOS Safari), where the
+   UA stylesheet does not apply display:none automatically. Flux overrides this
+   with an inline style when showing a modal, so opening still works correctly. */
+dialog:not([open]) {
+  display: none;
+}
+
+/* Cooking Mode */
+.cooking-mode-instructions p {
+  margin-bottom: 0.5em;
+}
+
+.cooking-mode-instructions b,
+.cooking-mode-instructions strong {
+  color: #65a30d; /* lime-600 */
+}
+
+.dark .cooking-mode-instructions b,
+.dark .cooking-mode-instructions strong {
+  color: #a3e635; /* lime-400 */
+}
+
+.cooking-mode-instructions ul,
+.cooking-mode-instructions ol {
+  list-style: decimal;
+  padding: 0 1rem 0 1rem;
+  margin: 0 1rem 0 1rem;
+}
+
+.cooking-mode-instructions li {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 1cm 1.2cm;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  body {
+    background: #fff;
+    color: #1a1a1a;
+    font-family: Inter, system-ui, sans-serif;
+    font-size: 10pt;
+  }
+
+  /* ── Page wrapper ─────────────────────────────────────────── */
+  .rp-page {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* ── PAGE 1 ───────────────────────────────────────────────── */
+  .rp-page-1 {
+    display: flex;
+    flex-direction: column;
+    page-break-after: always;
+    break-after: page;
+    height: 18.3cm;
+    overflow: hidden;
+  }
+
+  .rp-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25cm;
+    flex-shrink: 0;
+  }
+
+  .rp-site-name {
+    font-size: 7pt;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .rp-label-badge {
+    font-size: 7pt;
+    font-weight: 700;
+    padding: 0.1cm 0.35cm;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Two-column body on page 1 */
+  .rp-page-1-body {
+    display: grid;
+    grid-template-columns: 1fr 5.8cm;
+    gap: 0.6cm;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  /* Left: title + hero + meta */
+  .rp-page-1-main {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .rp-title {
+    font-size: 20pt;
+    font-weight: 800;
+    margin: 0 0 0.1cm;
+    line-height: 1.1;
+    color: #111;
+    flex-shrink: 0;
+  }
+
+  .rp-headline {
+    font-size: 9pt;
+    color: #666;
+    margin: 0 0 0.25cm;
+    flex-shrink: 0;
+  }
+
+  .rp-hero {
+    flex: 1;
+    min-height: 0;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 0.2cm;
+  }
+
+  .rp-hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .rp-description {
+    font-size: 7.5pt;
+    color: #555;
+    line-height: 1.4;
+    margin: 0 0 0.2cm;
+    flex-shrink: 0;
+  }
+
+  /* Meta strip */
+  .rp-meta {
+    display: flex;
+    background: #f5f5f5;
+    border-radius: 5px;
+    padding: 0.25cm 0.4cm;
+    flex-shrink: 0;
+  }
+
+  .rp-meta-item {
+    display: flex;
+    flex-direction: column;
+    margin-right: 1cm;
+  }
+
+  .rp-meta-label {
+    font-size: 6.5pt;
+    text-transform: uppercase;
+    color: #999;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.04cm;
+  }
+
+  .rp-meta-value {
+    font-size: 10pt;
+    font-weight: 700;
+    color: #111;
+  }
+
+  /* Right: ingredients sidebar on page 1 */
+  .rp-ing-sidebar {
+    border-left: 1.5px solid #e8e8e8;
+    padding-left: 0.55cm;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .rp-ing-sidebar-heading {
+    font-size: 8pt;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #555;
+    border-bottom: 1.5px solid #e0e0e0;
+    padding-bottom: 0.1cm;
+    margin: 0 0 0.15cm;
+    flex-shrink: 0;
+  }
+
+  .rp-ing-sidebar-heading--spaced {
+    margin-top: 0.35cm;
+  }
+
+  .rp-ing-sidebar-sub {
+    font-size: 7pt;
+    color: #999;
+    margin: 0 0 0.2cm;
+    flex-shrink: 0;
+  }
+
+  .rp-ing-sidebar-text {
+    font-size: 7.5pt;
+    color: #555;
+    margin: 0 0 0.25cm;
+    line-height: 1.4;
+    flex-shrink: 0;
+  }
+
+  /* 2-column ingredient grid */
+  .rp-ing-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.2cm;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    align-content: start;
+  }
+
+  .rp-ing-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    break-inside: avoid;
+  }
+
+  /* ≤8 ingredients */
+  .rp-ing-grid--lg .rp-ing-card-img,
+  .rp-ing-grid--lg .rp-ing-card-placeholder {
+    width: 2cm;
+    height: 2cm;
+  }
+
+  /* 9–12 ingredients */
+  .rp-ing-grid--md .rp-ing-card-img,
+  .rp-ing-grid--md .rp-ing-card-placeholder {
+    width: 1.6cm;
+    height: 1.6cm;
+  }
+
+  /* 13+ ingredients */
+  .rp-ing-grid--sm .rp-ing-card-img,
+  .rp-ing-grid--sm .rp-ing-card-placeholder {
+    width: 1.3cm;
+    height: 1.3cm;
+  }
+
+  .rp-ing-card-img {
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .rp-ing-card-placeholder {
+    border-radius: 50%;
+    background: #eee;
+  }
+
+  .rp-ing-card-name {
+    font-size: 7pt;
+    font-weight: 600;
+    margin-top: 0.1cm;
+    line-height: 1.2;
+    color: #222;
+  }
+
+  /* ── PAGE 2 ───────────────────────────────────────────────── */
+  .rp-page-2 {
+    display: grid;
+    grid-template-columns: 6.5cm 1fr;
+    gap: 0.8cm;
+    page-break-before: always;
+    break-before: page;
+    height: 18.3cm;
+    overflow: hidden;
+  }
+
+  /* Sidebar */
+  .rp-sidebar {
+    border-right: 1.5px solid #e8e8e8;
+    padding-right: 0.8cm;
+    overflow: hidden;
+  }
+
+  .rp-sidebar-section {
+    margin-bottom: 0.45cm;
+    break-inside: avoid;
+  }
+
+  .rp-sidebar-heading {
+    font-size: 7.5pt;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #555;
+    border-bottom: 1.5px solid #e0e0e0;
+    padding-bottom: 0.1cm;
+    margin: 0 0 0.15cm;
+  }
+
+  .rp-sidebar-sub {
+    font-size: 7pt;
+    color: #999;
+    margin: 0 0 0.15cm;
+  }
+
+  .rp-sidebar-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 7.5pt;
+    padding: 0.06cm 0;
+    border-bottom: 1px solid #f2f2f2;
+    gap: 0.2cm;
+  }
+
+  .rp-sidebar-row-value {
+    font-weight: 600;
+    white-space: nowrap;
+    color: #444;
+  }
+
+  .rp-sidebar-text {
+    font-size: 7.5pt;
+    color: #555;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  /* Steps panel */
+  .rp-steps {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .rp-steps-heading {
+    font-size: 13pt;
+    font-weight: 800;
+    margin: 0 0 0.35cm;
+    color: #111;
+    flex-shrink: 0;
+  }
+
+  /* Steps as a flex-wrap grid: each step is a card */
+  .rp-step-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45cm;
+    align-content: flex-start;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* 2-col: 4 steps → 2×2, bigger images */
+  .rp-step-grid--2col .rp-step {
+    width: calc(50% - 0.225cm);
+  }
+
+  .rp-step-grid--2col .rp-step-img-wrap {
+    height: 4.5cm;
+  }
+
+  /* 3-col: 5–6 steps → 2 rows of 3 */
+  .rp-step-grid--3col .rp-step {
+    width: calc(33.333% - 0.3cm);
+  }
+
+  .rp-step-grid--3col .rp-step-img-wrap {
+    height: 3cm;
+  }
+
+  /* 4-col: 7+ steps → 2 rows of 4 */
+  .rp-step-grid--4col .rp-step {
+    width: calc(25% - 0.3375cm);
+  }
+
+  .rp-step-grid--4col .rp-step-img-wrap {
+    height: 2cm;
+  }
+
+  .rp-step {
+    display: flex;
+    flex-direction: column;
+    break-inside: avoid;
+  }
+
+  .rp-step-num {
+    width: 0.65cm;
+    height: 0.65cm;
+    border-radius: 50%;
+    background: #99ca3c;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 8.5pt;
+    margin-bottom: 0.15cm;
+    flex-shrink: 0;
+  }
+
+  .rp-step-img-wrap {
+    width: 100%;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.15cm;
+    flex-shrink: 0;
+  }
+
+  .rp-step-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .rp-step-img-empty {
+    display: none;
+  }
+
+  .rp-step-instructions {
+    font-size: 7.5pt;
+    line-height: 1.4;
+    color: #222;
+  }
+
+  .rp-step-instructions p {
+    margin: 0;
+  }
+
+  .rp-step-instructions b,
+  .rp-step-instructions strong {
+    font-weight: 700;
+  }
+}

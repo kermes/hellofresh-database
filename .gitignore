@@ -34,3 +34,5 @@ package.lock
 /.claude
 /.ai
 /build/
+.pnpm-store/
+*.sql

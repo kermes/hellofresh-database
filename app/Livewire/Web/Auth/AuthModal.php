@@ -4,7 +4,6 @@ namespace App\Livewire\Web\Auth;
 
 use App\Livewire\AbstractComponent;
 use App\Livewire\Actions\LoginUserAction;
-use App\Livewire\Actions\RegisterUserAction;
 use App\Livewire\Web\Concerns\WithLocalizedContextTrait;
 use App\Support\Facades\Flux;
 use Illuminate\Contracts\View\View as ViewInterface;
@@ -27,15 +26,6 @@ class AuthModal extends AbstractComponent
     #[Validate('required|min:8')]
     public string $password = '';
 
-    public string $password_confirmation = '';
-
-    #[Validate('required|min:2')]
-    public string $name = '';
-
-    public ?string $country_code = null;
-
-    public bool $acceptPrivacy = false;
-
     public bool $remember = false;
 
     public bool $resetLinkSent = false;
@@ -47,15 +37,6 @@ class AuthModal extends AbstractComponent
     {
         $this->mode = 'login';
         $this->resetLinkSent = false;
-        $this->resetValidation();
-    }
-
-    /**
-     * Switch to register mode.
-     */
-    public function switchToRegister(): void
-    {
-        $this->mode = 'register';
         $this->resetValidation();
     }
 
@@ -109,25 +90,6 @@ class AuthModal extends AbstractComponent
     }
 
     /**
-     * Handle user registration.
-     */
-    public function register(RegisterUserAction $registerUser): void
-    {
-        $validated = $this->validate(
-            RegisterUserAction::rules(),
-            RegisterUserAction::messages(),
-        );
-
-        $user = $registerUser($validated);
-
-        Auth::login($user, true);
-
-        Session::regenerate();
-
-        $this->js('window.location.reload()');
-    }
-
-    /**
      * Handle logout.
      */
     public function logout(): void
@@ -150,7 +112,7 @@ class AuthModal extends AbstractComponent
     {
         $this->mode = 'login';
         $this->resetLinkSent = false;
-        $this->reset(['email', 'password', 'password_confirmation', 'name', 'country_code', 'acceptPrivacy', 'remember']);
+        $this->reset(['email', 'password', 'remember']);
         $this->resetValidation();
         Flux::showModal('auth-modal');
     }

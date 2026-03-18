@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8fce6fec93fb9da5233d358175c82a82",
+    "content-hash": "a216069b74484ef03a2b56c6c9baa08c",
     "packages": [
         {
             "name": "brick/math",
@@ -1951,69 +1951,6 @@
             "time": "2026-01-06T16:26:25+00:00"
         },
         {
-            "name": "laravel/sanctum",
-            "version": "v4.2.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laravel/sanctum.git",
-                "reference": "dadd2277ff0f05cdb435c8b6a0bcedcf3b5519a9"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laravel/sanctum/zipball/dadd2277ff0f05cdb435c8b6a0bcedcf3b5519a9",
-                "reference": "dadd2277ff0f05cdb435c8b6a0bcedcf3b5519a9",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "illuminate/console": "^11.0|^12.0",
-                "illuminate/contracts": "^11.0|^12.0",
-                "illuminate/database": "^11.0|^12.0",
-                "illuminate/support": "^11.0|^12.0",
-                "php": "^8.2",
-                "symfony/console": "^7.0"
-            },
-            "require-dev": {
-                "mockery/mockery": "^1.6",
-                "orchestra/testbench": "^9.15|^10.8",
-                "phpstan/phpstan": "^1.10"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Laravel\\Sanctum\\SanctumServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Laravel\\Sanctum\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Taylor Otwell",
-                    "email": "taylor@laravel.com"
-                }
-            ],
-            "description": "Laravel Sanctum provides a featherweight authentication system for SPAs and simple APIs.",
-            "keywords": [
-                "auth",
-                "laravel",
-                "sanctum"
-            ],
-            "support": {
-                "issues": "https://github.com/laravel/sanctum/issues",
-                "source": "https://github.com/laravel/sanctum"
-            },
-            "time": "2026-01-15T14:37:16+00:00"
-        },
-        {
             "name": "laravel/serializable-closure",
             "version": "v2.0.8",
             "source": {
@@ -2701,29 +2638,29 @@
         },
         {
             "name": "livewire/flux",
-            "version": "v2.11.1",
+            "version": "v2.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/livewire/flux.git",
-                "reference": "3ada3b2644215fd1ccb7003ce8e6bc185c22e70a"
+                "reference": "741be2d4526e90b97c7a59e079a2f27ecdce2461"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/livewire/flux/zipball/3ada3b2644215fd1ccb7003ce8e6bc185c22e70a",
-                "reference": "3ada3b2644215fd1ccb7003ce8e6bc185c22e70a",
+                "url": "https://api.github.com/repos/livewire/flux/zipball/741be2d4526e90b97c7a59e079a2f27ecdce2461",
+                "reference": "741be2d4526e90b97c7a59e079a2f27ecdce2461",
                 "shasum": ""
             },
             "require": {
-                "illuminate/console": "^10.0|^11.0|^12.0",
-                "illuminate/support": "^10.0|^11.0|^12.0",
-                "illuminate/view": "^10.0|^11.0|^12.0",
+                "illuminate/console": "^10.0|^11.0|^12.0|^13.0",
+                "illuminate/support": "^10.0|^11.0|^12.0|^13.0",
+                "illuminate/view": "^10.0|^11.0|^12.0|^13.0",
                 "laravel/prompts": "^0.1|^0.2|^0.3",
                 "livewire/livewire": "^3.7.4|^4.0",
                 "php": "^8.1",
-                "symfony/console": "^6.0|^7.0"
+                "symfony/console": "^6.0|^7.0|^8.0"
             },
             "conflict": {
-                "livewire/blaze": "<1.0.0"
+                "livewire/blaze": "<1.0.0-beta.2"
             },
             "type": "library",
             "extra": {
@@ -2761,82 +2698,9 @@
             ],
             "support": {
                 "issues": "https://github.com/livewire/flux/issues",
-                "source": "https://github.com/livewire/flux/tree/v2.11.1"
+                "source": "https://github.com/livewire/flux/tree/v2.13.0"
             },
-            "time": "2026-01-21T17:09:56+00:00"
-        },
-        {
-            "name": "livewire/flux-pro",
-            "version": "2.11.1",
-            "dist": {
-                "type": "zip",
-                "url": "https://composer.fluxui.dev/download/a0e59879-7eab-483a-94eb-2e558792f25e/flux-pro-2.11.1.zip",
-                "reference": "6c7259941b0914b768f0cd024b126d102a375858",
-                "shasum": "d2cc2eabe94e94242a3e3f07a75bda2370c4fba0"
-            },
-            "require": {
-                "illuminate/console": "^10.0|^11.0|^12.0",
-                "illuminate/support": "^10.0|^11.0|^12.0",
-                "illuminate/view": "^10.0|^11.0|^12.0",
-                "laravel/prompts": "^0.1.24|^0.2|^0.3",
-                "livewire/flux": "2.11.1|dev-main",
-                "livewire/livewire": "^3.7.4|^4.0",
-                "php": "^8.1",
-                "symfony/console": "^6.0|^7.0"
-            },
-            "require-dev": {
-                "livewire/volt": "*",
-                "orchestra/testbench": "^10.8"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "aliases": {
-                        "Flux": "FluxPro\\FluxPro"
-                    },
-                    "providers": [
-                        "FluxPro\\FluxProServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "files": [
-                    "src/helpers.php"
-                ],
-                "psr-4": {
-                    "FluxPro\\": "src/"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "App\\": "workbench/app/"
-                }
-            },
-            "scripts": {
-                "serve": [
-                    "Composer\\Config::disableProcessTimeout",
-                    "@php vendor/bin/testbench workbench:build --ansi",
-                    "@php vendor/bin/testbench serve --port 3000 --ansi"
-                ]
-            },
-            "license": [
-                "proprietary"
-            ],
-            "authors": [
-                {
-                    "name": "Caleb Porzio",
-                    "email": "calebporzio@gmail.com"
-                }
-            ],
-            "description": "The pro version of Flux, the official UI component library for Livewire.",
-            "keywords": [
-                "components",
-                "flux",
-                "laravel",
-                "livewire",
-                "ui"
-            ],
-            "time": "2026-01-22T11:01:01+00:00"
+            "time": "2026-03-03T03:32:35+00:00"
         },
         {
             "name": "livewire/livewire",

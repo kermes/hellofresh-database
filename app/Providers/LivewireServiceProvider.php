@@ -17,7 +17,7 @@ class LivewireServiceProvider extends ServiceProvider
         Livewire::setUpdateRoute(static function (array $handle) {
             return Route::post('livewire/update', $handle)
                 ->middleware([
-
+                    'web',
                     LivewireContextMiddleware::class,
                 ]);
         });

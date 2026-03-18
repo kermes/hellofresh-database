@@ -1,5 +1,5 @@
-<x-layouts.localized>
-  <flux:main container>
+<x-layouts.localized :bare="true">
+  <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
     <flux:card class="text-center py-12">
       <flux:icon.lock class="mx-auto size-16 text-zinc-300 dark:text-zinc-600" />
       <flux:heading size="lg" class="mt-4">{{ __('Login Required') }}</flux:heading>
@@ -8,5 +8,5 @@
         {{ __('Log In') }}
       </flux:button>
     </flux:card>
-  </flux:main>
+  </main>
 </x-layouts.localized>

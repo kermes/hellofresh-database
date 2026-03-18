@@ -218,15 +218,13 @@ The Laravel Boost guidelines are specifically curated by Laravel maintainers for
 ## Foundational Context
 This application is a Laravel application and its main Laravel ecosystems package & versions are below. You are an expert with them all. Ensure you abide by these specific packages & versions.
 
-- php - 8.4.17
+- php - 8.4.19
 - laravel/framework (LARAVEL) - v12
 - laravel/horizon (HORIZON) - v5
 - laravel/prompts (PROMPTS) - v0
 - laravel/pulse (PULSE) - v1
 - laravel/reverb (REVERB) - v1
-- laravel/sanctum (SANCTUM) - v4
 - livewire/flux (FLUXUI_FREE) - v2
-- livewire/flux-pro (FLUXUI_PRO) - v2
 - livewire/livewire (LIVEWIRE) - v4
 - larastan/larastan (LARASTAN) - v3
 - laravel/mcp (MCP) - v0
@@ -391,11 +389,11 @@ protected function isAccessible(User $user, ?string $path = null): bool
 ### Models
 - Casts can and likely should be set in a `casts()` method on a model rather than the `$casts` property. Follow existing conventions from other models.
 
-=== fluxui-pro/core rules ===
+=== fluxui-free/core rules ===
 
-## Flux UI Pro
+## Flux UI Free
 
-- This project is using the Pro version of Flux UI. It has full access to the free components and variants, as well as full access to the Pro components and variants.
+- This project is using the free edition of Flux UI. It has full access to the free components and variants, but does not have access to the Pro components.
 - Flux UI is a component library for Livewire. Flux is a robust, hand-crafted UI component library for your Livewire applications. It's built using Tailwind CSS and provides a set of components that are easy to use and customize.
 - You should use Flux UI components when available.
 - Fallback to standard Blade components if Flux is unavailable.
@@ -410,7 +408,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 This is correct as of Boost installation, but there may be additional components within the codebase.
 
 <available-flux-components>
-accordion, autocomplete, avatar, badge, brand, breadcrumbs, button, calendar, callout, card, chart, checkbox, command, composer, context, date-picker, dropdown, editor, field, file-upload, heading, icon, input, kanban, modal, navbar, otp-input, pagination, pillbox, popover, profile, radio, select, separator, skeleton, slider, switch, table, tabs, text, textarea, time-picker, toast, tooltip
+avatar, badge, brand, breadcrumbs, button, callout, checkbox, dropdown, field, heading, icon, input, modal, navbar, otp-input, profile, radio, select, separator, skeleton, switch, text, textarea, tooltip
 </available-flux-components>
 
 === livewire/core rules ===
@@ -554,4 +552,31 @@ accordion, autocomplete, avatar, badge, brand, breadcrumbs, button, calendar, ca
 - Use the custom spacing size `ui` instead of 2 (`p-2`, `space-y-2`, `gap-2` etc)
 - Use the custom spacing size `section` instead of 6 (`p-6`, `space-y-6`, `gap-6` etc)
 - Always use Lucide icons instead of Heroicons. You can publish missing Lucide icons using `php artisan flux:icon icon-name`
+
+## Flux Pro — No License
+
+This project does NOT have a Flux Pro license. `livewire/flux-pro` is listed in `composer.json` but not installed. Never use Pro-only components.
+
+### Pro components — use these replacements instead
+
+| Pro component | Replacement |
+|---|---|
+| `flux:option` | Plain `<option>` HTML tag inside `flux:select` |
+| `flux:main` | `<main>` with Tailwind classes |
+| `flux:header` | `<header>` with sticky/z-index classes |
+| `flux:footer` | `<footer>` |
+| `flux:spacer` | `<div class="grow"></div>` |
+| `flux:link` | `<a>` with hover classes |
+| `flux:label` | `<label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">` |
+| `flux:error name="x"` | `@error('x') <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror` |
+| `flux:subheading` | `<p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">` |
+| `flux:sidebar` | Custom Alpine.js sidebar in layouts |
+| `flux:toast` / `flux:toast.group` | `<x-ui.toast />` (free PHP helper `Flux::toast()` still works) |
+| `flux:tabs` / `flux:tab` | Segmented button group + `wire:click` + Blade conditional classes |
+| `flux:select variant="listbox"` | `flux:select` without `variant` (native HTML select) |
+| `flux:slider` | Two `<flux:input type="number">` for min/max |
+| `flux:pillbox` | `flux:input` search + scrollable div with checkbox rows |
+
+### flux:menu IS free — always use inside flux:dropdown
+`flux:menu`, `flux:menu.item`, `flux:menu.heading`, `flux:menu.separator`, `flux:menu.checkbox` are free. Always use them inside `flux:dropdown`.
 </project-guidelines>

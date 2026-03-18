@@ -24,7 +24,7 @@
         </div>
 
         <div class="flex gap-ui">
-            <flux:spacer />
+            <div class="grow"></div>
             <flux:modal.close>
                 <flux:button variant="filled">{{ __('Cancel') }}</flux:button>
             </flux:modal.close>

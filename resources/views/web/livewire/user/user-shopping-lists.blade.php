@@ -1,4 +1,4 @@
-<flux:main container class="space-y-section">
+<main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-section">
   @if ($this->shoppingLists->isEmpty())
     <flux:card class="text-center py-12">
       <flux:icon.shopping-basket class="mx-auto size-16 text-zinc-300 dark:text-zinc-600" />
@@ -45,4 +45,4 @@
       </flux:card>
     @endforeach
   @endif
-</flux:main>
+</main>

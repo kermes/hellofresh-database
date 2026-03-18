@@ -13,9 +13,8 @@
         'bringUrl' => localized_route('localized.shopping-list.bring'),
     ];
 @endphp
-<flux:main
-  container
-  class="space-y-section"
+<main
+  class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-section"
   x-data="{
         ...{{ Js::from($jsConfig) }},
         initialized: false,
@@ -215,20 +214,12 @@
             <flux:button size="sm" icon="printer" square />
             <flux:menu>
               <flux:menu.heading>{{ __('With Checkboxes') }}</flux:menu.heading>
-              <flux:menu.item icon="list" x-on:click="printList('combined')">
-                {{ __('All ingredients combined') }}
-              </flux:menu.item>
-              <flux:menu.item icon="list" x-on:click="printList('by-recipe')">
-                {{ __('Grouped by recipe') }}
-              </flux:menu.item>
+              <flux:menu.item x-on:click="printList('combined')" icon="list">{{ __('All ingredients combined') }}</flux:menu.item>
+              <flux:menu.item x-on:click="printList('by-recipe')" icon="list">{{ __('Grouped by recipe') }}</flux:menu.item>
               <flux:menu.separator />
               <flux:menu.heading>{{ __('Without Checkboxes') }}</flux:menu.heading>
-              <flux:menu.item icon="list" x-on:click="printList('combined-no-checkbox')">
-                {{ __('All ingredients combined') }}
-              </flux:menu.item>
-              <flux:menu.item icon="list" x-on:click="printList('by-recipe-no-checkbox')">
-                {{ __('Grouped by recipe') }}
-              </flux:menu.item>
+              <flux:menu.item x-on:click="printList('combined-no-checkbox')" icon="list">{{ __('All ingredients combined') }}</flux:menu.item>
+              <flux:menu.item x-on:click="printList('by-recipe-no-checkbox')" icon="list">{{ __('Grouped by recipe') }}</flux:menu.item>
             </flux:menu>
           </flux:dropdown>
 
@@ -245,36 +236,26 @@
         <flux:badge color="green" x-text="$store.shoppingList.count + ' ' + ($store.shoppingList.count === 1 ? translations.recipe : translations.recipes)"></flux:badge>
 
         <flux:dropdown>
-          <flux:button variant="subtle" size="sm" icon="printer">
+          <flux:button size="sm" icon="printer">
             {{ __('Print') }}
           </flux:button>
 
           <flux:menu>
             <flux:menu.heading>{{ __('With Checkboxes') }}</flux:menu.heading>
-            <flux:menu.item icon="list" x-on:click="printList('combined')">
-              {{ __('All ingredients combined') }}
-            </flux:menu.item>
-            <flux:menu.item icon="list" x-on:click="printList('by-recipe')">
-              {{ __('Grouped by recipe') }}
-            </flux:menu.item>
-
+            <flux:menu.item x-on:click="printList('combined')" icon="list">{{ __('All ingredients combined') }}</flux:menu.item>
+            <flux:menu.item x-on:click="printList('by-recipe')" icon="list">{{ __('Grouped by recipe') }}</flux:menu.item>
             <flux:menu.separator />
-
             <flux:menu.heading>{{ __('Without Checkboxes') }}</flux:menu.heading>
-            <flux:menu.item icon="list" x-on:click="printList('combined-no-checkbox')">
-              {{ __('All ingredients combined') }}
-            </flux:menu.item>
-            <flux:menu.item icon="list" x-on:click="printList('by-recipe-no-checkbox')">
-              {{ __('Grouped by recipe') }}
-            </flux:menu.item>
+            <flux:menu.item x-on:click="printList('combined-no-checkbox')" icon="list">{{ __('All ingredients combined') }}</flux:menu.item>
+            <flux:menu.item x-on:click="printList('by-recipe-no-checkbox')" icon="list">{{ __('Grouped by recipe') }}</flux:menu.item>
           </flux:menu>
         </flux:dropdown>
 
-        <flux:button variant="subtle" size="sm" icon="bring" x-on:click="exportToBring()">
+        <flux:button size="sm" icon="bring" x-on:click="exportToBring()">
           Bring!
         </flux:button>
 
-        <flux:button variant="subtle" size="sm" icon="bookmark" wire:click="openSaveModal">
+        <flux:button size="sm" icon="bookmark" wire:click="openSaveModal">
           {{ __('Save') }}
         </flux:button>
 
@@ -313,9 +294,9 @@
                 @endif
 
                 <div class="flex-1">
-                  <flux:link :href="localized_route('localized.recipes.show', ['slug' => slugify($recipe->name), 'recipe' => $recipe->id])" wire:navigate class="print:hidden">
+                  <a href="{{ localized_route('localized.recipes.show', ['slug' => slugify($recipe->name), 'recipe' => $recipe->id]) }}" wire:navigate class="print:hidden">
                     {{ $recipe->name }}
-                  </flux:link>
+                  </a>
                   <flux:heading size="sm" class="not-print:hidden">{{ $recipe->name }}</flux:heading>
 
                   <div class="flex items-center gap-ui mt-2 justify-end">
@@ -532,4 +513,4 @@
       </div>
     </div>
   @endif
-</flux:main>
+</main>

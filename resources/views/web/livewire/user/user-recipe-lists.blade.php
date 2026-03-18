@@ -1,4 +1,4 @@
-<flux:main container>
+<main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
   @if ($viewingListId && $this->viewingList)
     {{-- Viewing a specific list --}}
     <div class="space-y-section">
@@ -47,37 +47,40 @@
 
       {{-- Recent Activity --}}
       @if ($this->recentActivities->isNotEmpty())
-        <flux:accordion transition class="border rounded p-ui border-zinc-200 dark:border-zinc-700">
-          <flux:accordion.item>
-            <flux:accordion.heading>
-              <span class="flex items-center gap-ui">
-                <flux:icon.clock variant="mini" />
-                {{ __('Recent Activity') }}
-              </span>
-            </flux:accordion.heading>
+        <div x-data="{ open: false }" class="rounded border border-zinc-200 dark:border-zinc-700">
+          <button
+            type="button"
+            x-on:click="open = !open"
+            class="flex w-full items-center justify-between px-ui py-ui text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 rounded"
+          >
+            <span class="flex items-center gap-ui">
+              <flux:icon.clock variant="mini" />
+              {{ __('Recent Activity') }}
+            </span>
+            <flux:icon.chevron-down variant="mini" class="transition-transform duration-200" x-bind:class="open && 'rotate-180'" />
+          </button>
 
-            <flux:accordion.content>
-              <div class="space-y-ui">
-                @foreach ($this->recentActivities as $activity)
-                  <div wire:key="activity-{{ $activity->id }}" class="flex items-center gap-ui text-sm">
-                    <flux:text variant="subtle">
-                      <strong>{{ $activity->user->name }}</strong>
-                      {{ $activity->action->label() }}
-                      @if ($activity->recipe->country_id === $this->countryId)
-                        <flux:link :href="localized_route('localized.recipes.show', ['slug' => slugify($activity->recipe->name), 'recipe' => $activity->recipe->id])" wire:navigate>
-                          {{ $activity->recipe->name }}
-                        </flux:link>
-                      @else
-                        <strong><x-flag :code="$activity->recipe->country->code" /> {{ $activity->recipe?->getFirstTranslation('name') }}</strong>
-                      @endif
-                      <span class="text-zinc-400">{{ $activity->created_at->diffForHumans() }}</span>
-                    </flux:text>
-                  </div>
-                @endforeach
-              </div>
-            </flux:accordion.content>
-          </flux:accordion.item>
-        </flux:accordion>
+          <div x-show="open" x-transition class="border-t border-zinc-200 dark:border-zinc-700 px-ui py-ui">
+            <div class="space-y-ui">
+              @foreach ($this->recentActivities as $activity)
+                <div wire:key="activity-{{ $activity->id }}" class="flex items-center gap-ui text-sm">
+                  <flux:text>
+                    <strong>{{ $activity->user->name }}</strong>
+                    {{ $activity->action->label() }}
+                    @if ($activity->recipe->country_id === $this->countryId)
+                      <a href="{{ localized_route('localized.recipes.show', ['slug' => slugify($activity->recipe->name), 'recipe' => $activity->recipe->id]) }}" wire:navigate>
+                        {{ $activity->recipe->name }}
+                      </a>
+                    @else
+                      <strong><x-flag :code="$activity->recipe->country->code" /> {{ $activity->recipe?->getFirstTranslation('name') }}</strong>
+                    @endif
+                    <span class="text-zinc-400">{{ $activity->created_at->diffForHumans() }}</span>
+                  </flux:text>
+                </div>
+              @endforeach
+            </div>
+          </div>
+        </div>
       @endif
 
       @if ($this->otherCountriesRecipeCount > 0)
@@ -135,9 +138,9 @@
 
               <div class="p-4">
                 <flux:heading size="lg" class="line-clamp-1">
-                  <flux:link :href="localized_route('localized.recipes.show', ['slug' => slugify($recipe->name), 'recipe' => $recipe->id])" wire:navigate>
+                  <a href="{{ localized_route('localized.recipes.show', ['slug' => slugify($recipe->name), 'recipe' => $recipe->id]) }}" wire:navigate>
                     {{ $recipe->name }}
-                  </flux:link>
+                  </a>
                 </flux:heading>
 
                 @if ($recipe->headline)
@@ -198,24 +201,19 @@
                   <flux:button variant="ghost" size="sm" icon="ellipsis-vertical" x-on:click.stop="" />
 
                   <flux:menu>
-                    <flux:menu.item icon="share" wire:click.stop="startSharing({{ $list->id }})">
-                      {{ __('Share') }}
-                    </flux:menu.item>
-                    <flux:menu.item icon="pencil" wire:click.stop="startEditing({{ $list->id }})">
-                      {{ __('Edit') }}
-                    </flux:menu.item>
+                    <flux:menu.item wire:click.stop="startSharing({{ $list->id }})" icon="share">{{ __('Share') }}</flux:menu.item>
+                    <flux:menu.item wire:click.stop="startEditing({{ $list->id }})" icon="pencil">{{ __('Edit') }}</flux:menu.item>
+                    <flux:menu.separator />
                     <flux:menu.item
-                      icon="trash"
                       variant="danger"
+                      icon="trash"
                       x-on:click.stop="$dispatch('confirm-action', {
-                                            title: '{{ __('Delete List') }}',
-                                            message: '{{ __('Delete this list and all its recipes?') }}',
-                                            confirmText: '{{ __('Delete') }}',
-                                            onConfirm: () => $wire.deleteList({{ $list->id }})
-                                        })"
-                    >
-                      {{ __('Delete') }}
-                    </flux:menu.item>
+                        title: '{{ __('Delete List') }}',
+                        message: '{{ __('Delete this list and all its recipes?') }}',
+                        confirmText: '{{ __('Delete') }}',
+                        onConfirm: () => $wire.deleteList({{ $list->id }})
+                      })"
+                    >{{ __('Delete') }}</flux:menu.item>
                   </flux:menu>
                 </flux:dropdown>
               </div>
@@ -251,17 +249,15 @@
 
                     <flux:menu>
                       <flux:menu.item
-                        icon="log-out"
                         variant="danger"
+                        icon="arrow-right-start-on-rectangle"
                         x-on:click.stop="$dispatch('confirm-action', {
-                                              title: '{{ __('Leave List') }}',
-                                              message: '{{ __('You will no longer have access to this list.') }}',
-                                              confirmText: '{{ __('Leave') }}',
-                                              onConfirm: () => $wire.leaveSharedList({{ $list->id }})
-                                          })"
-                      >
-                        {{ __('Leave List') }}
-                      </flux:menu.item>
+                          title: '{{ __('Leave List') }}',
+                          message: '{{ __('You will no longer have access to this list.') }}',
+                          confirmText: '{{ __('Leave') }}',
+                          onConfirm: () => $wire.leaveSharedList({{ $list->id }})
+                        })"
+                      >{{ __('Leave List') }}</flux:menu.item>
                     </flux:menu>
                   </flux:dropdown>
                 </div>
@@ -337,9 +333,9 @@
 
       <form wire:submit="shareList" class="space-y-section">
         <flux:field>
-          <flux:label>{{ __('Email Address') }}</flux:label>
+          <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">{{ __('Email Address') }}</label>
           <flux:input wire:model="shareEmail" type="email" :placeholder="__('friend@example.com')" required />
-          <flux:error name="shareEmail" />
+          @error('shareEmail') <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
         </flux:field>
 
         <div class="flex justify-end gap-ui">
@@ -350,4 +346,4 @@
         </div>
       </form>
   </flux:modal>
-</flux:main>
+</main>

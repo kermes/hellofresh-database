@@ -2,21 +2,15 @@
 
 namespace App\Providers;
 
-use App\Models\PersonalAccessToken;
-use App\Models\User;
-use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
-use Laravel\Sanctum\Sanctum;
 use Spatie\Translatable\Facades\Translatable;
 
 class AppServiceProvider extends ServiceProvider
@@ -29,12 +23,9 @@ class AppServiceProvider extends ServiceProvider
         $this->configureCommands();
         $this->configureDevAlwaysToMail();
         $this->configureModels();
-        $this->configureEmailVerification();
         $this->configureRateLimiting();
 
         $this->definingDefaultPasswordRules();
-
-        Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
 
         Translatable::fallback(
             fallbackAny: true,
@@ -74,23 +65,6 @@ class AppServiceProvider extends ServiceProvider
     {
         // Model::automaticallyEagerLoadRelationships();
         Model::shouldBeStrict(! $this->app->isProduction());
-    }
-
-    /**
-     * Configure the email verification URL to use the portal route.
-     */
-    protected function configureEmailVerification(): void
-    {
-        VerifyEmail::createUrlUsing(function (User $notifiable): string {
-            return URL::temporarySignedRoute(
-                'portal.verification.verify',
-                Date::now()->addMinutes(Config::integer('auth.verification.expire', 60)),
-                [
-                    'id' => $notifiable->getKey(),
-                    'hash' => sha1($notifiable->email),
-                ]
-            );
-        });
     }
 
     /**
