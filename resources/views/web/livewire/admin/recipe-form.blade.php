@@ -602,7 +602,7 @@
 
     {{-- ── Actions ── --}}
     <div class="flex items-center gap-ui">
-      @if ($recipeId && auth()->user()->admin)
+      @if ($recipeId && $this->canManageRecipe())
         <flux:button
           wire:click="archive"
           wire:confirm="{{ __('Are you sure you want to archive this recipe? It will be hidden from the recipe list.') }}"
@@ -644,7 +644,7 @@
         </flux:button>
       @endif
 
-      @if (!$recipeId || auth()->user()->admin)
+      @if (!$recipeId || $this->canManageRecipe())
         <flux:button type="submit" variant="primary" icon="save">
           {{ __('Save Recipe') }}
         </flux:button>

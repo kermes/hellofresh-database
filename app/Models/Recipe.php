@@ -20,6 +20,8 @@ use Illuminate\Support\Str;
 use Spatie\Translatable\HasTranslations;
 
 /**
+ * @property int|null $author_id
+ *
  * @mixin Builder<Recipe>
  */
 #[ObservedBy([RecipeObserver::class])]

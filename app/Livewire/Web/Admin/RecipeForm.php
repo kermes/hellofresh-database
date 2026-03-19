@@ -599,6 +599,19 @@ class RecipeForm extends AbstractComponent
         );
     }
 
+    // ── Authorization ────────────────────────────────────────────
+
+    protected function canManageRecipe(?Recipe $recipe = null): bool
+    {
+        if ((bool) auth()->user()?->admin) {
+            return true;
+        }
+
+        $recipe ??= $this->recipeId !== null ? Recipe::find($this->recipeId) : null;
+
+        return $recipe !== null && $recipe->author_id === auth()->id();
+    }
+
     // ── Save ─────────────────────────────────────────────────────
 
     public function save(): void
@@ -613,7 +626,7 @@ class RecipeForm extends AbstractComponent
             $recipe->country_id = $this->countryId;
             $recipe->author_id = auth()->id();
         } else {
-            abort_unless((bool) auth()->user()?->admin, 403);
+            abort_unless($this->canManageRecipe($recipe), 403);
         }
 
         $this->fillRecipe($recipe);
@@ -649,7 +662,7 @@ class RecipeForm extends AbstractComponent
     public function archive(): void
     {
         abort_if($this->recipeId === null, 404);
-        abort_unless((bool) auth()->user()?->admin, 403);
+        abort_unless($this->canManageRecipe(), 403);
 
         $recipe = Recipe::findOrFail($this->recipeId);
         $recipe->published = false;
