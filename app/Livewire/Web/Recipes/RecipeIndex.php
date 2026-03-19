@@ -112,6 +112,9 @@ class RecipeIndex extends AbstractComponent
     /** @var array{0: int, 1: int}|null */
     public ?array $totalTimeRange = null;
 
+    /** @var array<int> */
+    public array $authorIds = [];
+
     /**
      * Boot the component and clean up legacy properties.
      */
@@ -150,6 +153,7 @@ class RecipeIndex extends AbstractComponent
         $this->difficultyLevels = session($this->filterSessionKey('difficulty'), []);
         $this->prepTimeRange = session($this->filterSessionKey('prep_time'), $this->getDefaultPrepTimeRange());
         $this->totalTimeRange = session($this->filterSessionKey('total_time'), $this->getDefaultTotalTimeRange());
+        $this->authorIds = session($this->filterSessionKey('authors'), []);
     }
 
     /**
@@ -341,6 +345,7 @@ class RecipeIndex extends AbstractComponent
             'difficultyLevels' => 'difficulty',
             'prepTimeRange' => 'prep_time',
             'totalTimeRange' => 'total_time',
+            'authorIds' => 'authors',
         ];
     }
 
@@ -363,7 +368,8 @@ class RecipeIndex extends AbstractComponent
             + (int) ($this->excludedUtensilIds !== [])
             + (int) ($this->difficultyLevels !== [])
             + (int) $this->isPrepTimeFilterActive()
-            + (int) $this->isTotalTimeFilterActive();
+            + (int) $this->isTotalTimeFilterActive()
+            + (int) ($this->authorIds !== []);
     }
 
     /**
@@ -413,6 +419,7 @@ class RecipeIndex extends AbstractComponent
         $this->difficultyLevels = [];
         $this->prepTimeRange = $this->getDefaultPrepTimeRange();
         $this->totalTimeRange = $this->getDefaultTotalTimeRange();
+        $this->authorIds = [];
 
         session()->forget([
             $this->filterSessionKey('has_pdf'),
@@ -430,6 +437,7 @@ class RecipeIndex extends AbstractComponent
             $this->filterSessionKey('difficulty'),
             $this->filterSessionKey('prep_time'),
             $this->filterSessionKey('total_time'),
+            $this->filterSessionKey('authors'),
         ]);
         $this->resetPage();
     }
@@ -479,6 +487,7 @@ class RecipeIndex extends AbstractComponent
             ->when($this->difficultyLevels !== [], fn (Builder $query) => $query->whereIn('difficulty', $this->difficultyLevels))
             ->when($this->isPrepTimeFilterActive(), fn (Builder $query): Builder => $this->applyPrepTimeFilter($query))
             ->when($this->isTotalTimeFilterActive(), fn (Builder $query): Builder => $this->applyTotalTimeFilter($query))
+            ->when($this->authorIds !== [], fn (Builder $query) => $query->whereIn('author_id', $this->authorIds))
             ->with(['country', 'label', 'tags'])
             ->orderBy($this->getSortEnum()->column(), $this->getSortEnum()->direction())
             ->orderBy('id')

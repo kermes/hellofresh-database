@@ -222,6 +222,22 @@
     </flux:field>
   @endif
 
+  @if ($this->authorOptions->isNotEmpty())
+    <flux:field>
+      <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">{{ __('Author') }}</label>
+      <div class="rounded-lg border border-zinc-200 dark:border-zinc-700 overflow-hidden">
+        <div class="max-h-48 overflow-y-auto divide-y divide-zinc-100 dark:divide-zinc-800">
+          @foreach ($this->authorOptions as $author)
+            <label wire:key="author-{{ $author->id }}" class="flex items-center gap-2 px-3 py-2 text-sm hover:bg-zinc-50 dark:hover:bg-zinc-700/50 cursor-pointer">
+              <input type="checkbox" wire:model.live="authorIds" value="{{ $author->id }}" class="rounded border-zinc-300 dark:border-zinc-600">
+              {{ $author->name }}
+            </label>
+          @endforeach
+        </div>
+      </div>
+    </flux:field>
+  @endif
+
   @if ($this->activeFilterCount > 0)
     <flux:button wire:click="clearFilters" variant="danger" class="w-full">
       {{ __('Clear All Filters') }}

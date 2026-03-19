@@ -8,7 +8,9 @@ use App\Models\Allergen;
 use App\Models\Ingredient;
 use App\Models\Label;
 use App\Models\Tag;
+use App\Models\User;
 use App\Models\Utensil;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\Computed;
 
@@ -35,6 +37,7 @@ use Livewire\Attributes\Computed;
  * @property array<int> $excludedUtensilIds
  * @property string $utensilSearch
  * @property string $excludedUtensilSearch
+ * @property array<int> $authorIds
  * @property Collection<int, Ingredient> $ingredientOptions
  * @property Collection<int, Ingredient> $excludedIngredientOptions
  */
@@ -289,5 +292,18 @@ trait WithRecipeFilterOptionsTrait
     {
         return $this->excludedIngredientSearch !== '' &&
             $this->excludedIngredientOptions->count() > count($this->excludedIngredientIds);
+    }
+
+    /**
+     * Get all authors who have recipes in the current country.
+     *
+     * @return Collection<int, User>
+     */
+    #[Computed]
+    public function authorOptions(): Collection
+    {
+        return User::whereHas('recipes', fn (Builder $query) => $query->where('country_id', $this->countryId))
+            ->orderBy('name')
+            ->get();
     }
 }
