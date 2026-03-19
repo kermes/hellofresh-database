@@ -59,11 +59,14 @@ Route::middleware('auth.or.message')->group(function (): void {
     Route::get('saved-shopping-lists', UserShoppingLists::class)->name('saved-shopping-lists');
 });
 
-Route::middleware(['auth', 'admin'])->group(function (): void {
+Route::middleware('auth')->group(function (): void {
     Route::get('recipes/create', RecipeForm::class)->name('recipes.create');
     Route::get('recipes/{recipe}/edit', RecipeForm::class)
         ->where('recipe', '[0-9]+')
         ->name('recipes.edit');
+});
+
+Route::middleware(['auth', 'admin'])->group(function (): void {
     Route::get('admin/ingredients', IngredientIndex::class)->name('admin.ingredients');
     Route::get('admin/users', UserIndex::class)->name('admin.users');
 });

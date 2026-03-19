@@ -122,7 +122,7 @@
 >
   {{-- Sidebar header --}}
   <div class="flex items-center justify-between p-4 border-b border-zinc-200 dark:border-zinc-700">
-    <span class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">{{ config('app.name') }}</span>
+    <span class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">{{ request()->getHost() }}</span>
     <button
       type="button"
       x-on:click="mobileOpen = false"

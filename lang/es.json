@@ -326,6 +326,8 @@
   "Are you sure you want to archive this recipe? It will be hidden from the recipe list.": "¿Estás seguro de que deseas archivar esta receta? Se ocultará de la lista de recetas.",
   "Create \":name\"": "Crear \":name\"",
   "Create Recipe": "Crear receta",
+  "Create Variant": "Crear variante",
+  "This will create a new recipe based on your current edits. The original recipe will not be changed.": "Se creará una nueva receta con tus ediciones actuales. La receta original no se modificará.",
   "Back to Recipe": "Volver a la receta",
   "Back to Recipes": "Volver a las recetas",
   "Basic Information": "Información básica",

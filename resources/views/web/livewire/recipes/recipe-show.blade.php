@@ -99,6 +99,12 @@ $cookingTotalSlides = count($cookingSlideNames);
         <span>{{ $recipe->cuisines->pluck('name')->join(', ') }}</span>
       </div>
       @endif
+      @if ($recipe->author)
+      <div class="flex items-center gap-2">
+        <flux:icon.user variant="mini" class="text-zinc-500" />
+        <span>{{ $recipe->author->name }}</span>
+      </div>
+      @endif
 
       <div class="flex items-center gap-2 ml-auto">
         @auth

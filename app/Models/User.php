@@ -75,6 +75,16 @@ class User extends Authenticatable implements HasMedia
     }
 
     /**
+     * Get the recipes authored by the user.
+     *
+     * @return HasMany<Recipe, $this>
+     */
+    public function recipes(): HasMany
+    {
+        return $this->hasMany(Recipe::class, 'author_id');
+    }
+
+    /**
      * Get the favorites for the user.
      *
      * @return HasMany<Favorite, $this>

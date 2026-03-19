@@ -30,6 +30,7 @@ class RecipeShow extends AbstractComponent
         abort_if($recipe->country_id !== $this->countryId, 404);
 
         $this->recipe = $recipe->load([
+            'author',
             'country',
             'label',
             'tags',

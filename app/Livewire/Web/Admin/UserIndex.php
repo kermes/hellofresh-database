@@ -106,6 +106,7 @@ class UserIndex extends AbstractComponent
         $user = User::findOrFail($this->confirmingDeleteId);
 
         abort_if($user->id === auth()->id(), 403, __('You cannot delete your own account.'));
+        abort_if($user->id === 1, 403, __('You cannot delete the system user.'));
 
         $user->delete();
 

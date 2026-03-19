@@ -321,6 +321,8 @@
   "Are you sure you want to archive this recipe? It will be hidden from the recipe list.": "Are you sure you want to archive this recipe? It will be hidden from the recipe list.",
   "Create \":name\"": "Create \":name\"",
   "Create Recipe": "Create Recipe",
+  "Create Variant": "Create Variant",
+  "This will create a new recipe based on your current edits. The original recipe will not be changed.": "This will create a new recipe based on your current edits. The original recipe will not be changed.",
   "Back to Recipe": "Back to Recipe",
   "Back to Recipes": "Back to Recipes",
   "Basic Information": "Basic Information",

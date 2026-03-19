@@ -528,6 +528,23 @@ class RecipeForm extends AbstractComponent
         );
     }
 
+    public function createAndAddUtensil(): void
+    {
+        $name = trim($this->utensilSearch);
+
+        if (strlen($name) < 2) {
+            return;
+        }
+
+        $utensil = new Utensil();
+        $utensil->country_id = $this->countryId;
+        $utensil->active = true;
+        $utensil->setTranslation('name', $this->locale, $name);
+        $utensil->save();
+
+        $this->addUtensil($utensil->id);
+    }
+
     // ── Allergens ─────────────────────────────────────────────────
 
     /**
@@ -586,7 +603,130 @@ class RecipeForm extends AbstractComponent
 
     public function save(): void
     {
-        $this->validate([
+        $this->validate($this->validationRules());
+
+        $recipe = $this->recipeId !== null
+            ? Recipe::findOrFail($this->recipeId)
+            : new Recipe();
+
+        if ($this->recipeId === null) {
+            $recipe->country_id = $this->countryId;
+            $recipe->author_id = auth()->id();
+        } else {
+            abort_unless((bool) auth()->user()?->admin, 403);
+        }
+
+        $this->fillRecipe($recipe);
+        $recipe->save();
+        $this->syncRelationships($recipe);
+
+        $this->recipeId = $recipe->id;
+
+        $this->redirectToRecipe($recipe);
+    }
+
+    public function createVariant(): void
+    {
+        abort_if($this->recipeId === null, 404);
+
+        $this->validate($this->validationRules());
+
+        $original = Recipe::findOrFail($this->recipeId);
+
+        $variant = new Recipe();
+        $variant->country_id = $this->countryId;
+        $variant->author_id = auth()->id();
+        $variant->canonical_id = $original->canonical_id ?? $original->id;
+        $variant->variant = true;
+
+        $this->fillRecipe($variant);
+        $variant->save();
+        $this->syncRelationships($variant);
+
+        $this->redirectToRecipe($variant);
+    }
+
+    public function archive(): void
+    {
+        abort_if($this->recipeId === null, 404);
+        abort_unless((bool) auth()->user()?->admin, 403);
+
+        $recipe = Recipe::findOrFail($this->recipeId);
+        $recipe->published = false;
+        $recipe->save();
+
+        $this->redirect(localized_route('localized.recipes.index'), navigate: true);
+    }
+
+    /**
+     * Apply all form field values to the given recipe model.
+     */
+    protected function fillRecipe(Recipe $recipe): void
+    {
+        $recipe->setTranslation('name', $this->locale, $this->name);
+
+        if ($this->headline !== '') {
+            $recipe->setTranslation('headline', $this->locale, $this->headline);
+        }
+
+        if ($this->description !== '') {
+            $recipe->setTranslation('description', $this->locale, $this->description);
+        }
+
+        $recipe->difficulty = $this->difficulty;
+        $recipe->prep_time = $this->prepTime;
+        $recipe->total_time = $this->totalTime;
+        $recipe->published = $this->published;
+        $recipe->label_id = $this->labelId;
+        $recipe->steps_primary = $this->buildStepsPrimary();
+        $recipe->yields_primary = $this->buildYieldsPrimary();
+
+        if ($this->newImage instanceof TemporaryUploadedFile) {
+            $filename = $this->newImage->getClientOriginalName();
+            $path = $this->newImage->storeAs('hellofresh/recipes', $filename, 'public');
+            $recipe->image_path = '/recipes/' . basename((string) $path);
+            $this->existingImagePath = $recipe->image_path;
+        } elseif ($recipe->image_path === null && $this->existingImagePath !== null) {
+            $recipe->image_path = $this->existingImagePath;
+        }
+    }
+
+    /**
+     * Sync all pivot relationships for the given recipe.
+     */
+    protected function syncRelationships(Recipe $recipe): void
+    {
+        $recipe->ingredients()->sync(array_column($this->ingredientRows, 'ingredient_id'));
+        $recipe->tags()->sync($this->tagIds);
+        $recipe->utensils()->sync($this->utensilIds);
+        $recipe->allergens()->sync($this->allergenIds);
+    }
+
+    /**
+     * Redirect to the recipe show page.
+     */
+    protected function redirectToRecipe(Recipe $recipe): void
+    {
+        $nameForSlug = $recipe->name ?: ($recipe->getFirstTranslation('name') ?? '');
+        $slug = Str::slug($nameForSlug);
+
+        $this->redirect(
+            localized_route('localized.recipes.show', [
+                'slug' => $slug !== '' ? $slug : 'recipe',
+                'recipe' => $recipe->id,
+            ]),
+            navigate: true
+        );
+    }
+
+    /**
+     * Returns the validation rules for the recipe form.
+     *
+     * @return array<string, list<mixed>>
+     */
+    protected function validationRules(): array
+    {
+        return [
             'name' => ['required', 'string', 'max:255'],
             'headline' => ['nullable', 'string', 'max:500'],
             'description' => ['nullable', 'string'],
@@ -611,9 +751,17 @@ class RecipeForm extends AbstractComponent
             'utensilIds.*' => ['integer', 'exists:utensils,id'],
             'allergenIds' => ['array'],
             'allergenIds.*' => ['integer', 'exists:allergens,id'],
-        ]);
+        ];
+    }
 
-        $stepsPrimary = array_values(array_map(
+    /**
+     * Build the steps_primary JSON structure from the current form state.
+     *
+     * @return list<array<string, mixed>>
+     */
+    protected function buildStepsPrimary(): array
+    {
+        return array_values(array_map(
             function (int $idx, array $step): array {
                 $images = [];
 
@@ -634,71 +782,6 @@ class RecipeForm extends AbstractComponent
             array_keys($this->steps),
             $this->steps
         ));
-
-        $recipe = $this->recipeId !== null
-            ? Recipe::findOrFail($this->recipeId)
-            : new Recipe();
-
-        $recipe->setTranslation('name', $this->locale, $this->name);
-
-        if ($this->headline !== '') {
-            $recipe->setTranslation('headline', $this->locale, $this->headline);
-        }
-
-        if ($this->description !== '') {
-            $recipe->setTranslation('description', $this->locale, $this->description);
-        }
-
-        $recipe->difficulty = $this->difficulty;
-        $recipe->prep_time = $this->prepTime;
-        $recipe->total_time = $this->totalTime;
-        $recipe->published = $this->published;
-        $recipe->label_id = $this->labelId;
-        $recipe->steps_primary = $stepsPrimary;
-        $recipe->yields_primary = $this->buildYieldsPrimary();
-
-        if ($this->recipeId === null) {
-            $recipe->country_id = $this->countryId;
-        }
-
-        if ($this->newImage instanceof TemporaryUploadedFile) {
-            $filename = $this->newImage->getClientOriginalName();
-            $path = $this->newImage->storeAs('hellofresh/recipes', $filename, 'public');
-            $recipe->image_path = '/recipes/' . basename((string) $path);
-            $this->existingImagePath = $recipe->image_path;
-        }
-
-        $recipe->save();
-
-        $ingredientIds = array_column($this->ingredientRows, 'ingredient_id');
-        $recipe->ingredients()->sync($ingredientIds);
-        $recipe->tags()->sync($this->tagIds);
-        $recipe->utensils()->sync($this->utensilIds);
-        $recipe->allergens()->sync($this->allergenIds);
-
-        $this->recipeId = $recipe->id;
-
-        $nameForSlug = $recipe->name ?: ($recipe->getFirstTranslation('name') ?? '');
-        $slug = Str::slug($nameForSlug);
-
-        $this->redirect(
-            localized_route('localized.recipes.show', [
-                'slug' => $slug !== '' ? $slug : 'recipe',
-                'recipe' => $recipe->id,
-            ]),
-            navigate: true
-        );
-    }
-
-    public function archive(): void
-    {
-        abort_if($this->recipeId === null, 404);
-
-        $recipe = Recipe::findOrFail($this->recipeId);
-        $recipe->published = false;
-        $recipe->save();
-
-        $this->redirect(localized_route('localized.recipes.index'), navigate: true);
     }
 
     /**

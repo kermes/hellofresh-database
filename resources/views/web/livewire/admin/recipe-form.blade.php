@@ -216,7 +216,7 @@
             x-show="open"
             class="absolute z-10 w-full mt-1 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 shadow-lg overflow-hidden"
           >
-            @forelse ($this->utensilSearchResults as $utensil)
+            @foreach ($this->utensilSearchResults as $utensil)
               <button
                 wire:key="utensil-result-{{ $utensil->id }}"
                 type="button"
@@ -226,9 +226,16 @@
               >
                 {{ $utensil->name }}
               </button>
-            @empty
-              <p class="px-3 py-2 text-sm text-zinc-500 dark:text-zinc-400">{{ __('No utensils found.') }}</p>
-            @endforelse
+            @endforeach
+            <button
+              type="button"
+              wire:click="createAndAddUtensil"
+              x-on:click="open = false"
+              class="w-full flex items-center gap-2 px-3 py-2 text-sm text-left text-lime-700 dark:text-lime-400 hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors {{ $this->utensilSearchResults->isNotEmpty() ? 'border-t border-zinc-100 dark:border-zinc-700' : '' }}"
+            >
+              <flux:icon.plus class="size-3.5 shrink-0" />
+              {{ __('Create ":name"', ['name' => $utensilSearch]) }}
+            </button>
           </div>
         @endif
       </div>
@@ -595,7 +602,7 @@
 
     {{-- ── Actions ── --}}
     <div class="flex items-center gap-ui">
-      @if ($recipeId)
+      @if ($recipeId && auth()->user()->admin)
         <flux:button
           wire:click="archive"
           wire:confirm="{{ __('Are you sure you want to archive this recipe? It will be hidden from the recipe list.') }}"
@@ -626,9 +633,22 @@
         </flux:button>
       @endif
 
-      <flux:button type="submit" variant="primary" icon="save">
-        {{ __('Save Recipe') }}
-      </flux:button>
+      @if ($recipeId)
+        <flux:button
+          wire:click="createVariant"
+          wire:confirm="{{ __('This will create a new recipe based on your current edits. The original recipe will not be changed.') }}"
+          variant="outline"
+          icon="copy"
+        >
+          {{ __('Create Variant') }}
+        </flux:button>
+      @endif
+
+      @if (!$recipeId || auth()->user()->admin)
+        <flux:button type="submit" variant="primary" icon="save">
+          {{ __('Save Recipe') }}
+        </flux:button>
+      @endif
     </div>
 
   </form>

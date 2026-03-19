@@ -106,16 +106,19 @@
                 {{ $user->created_at->toDateString() }}
               </span>
 
+              @php $canDelete = $user->id !== auth()->id() && $user->id !== 1; @endphp
               @if ($confirmingDeleteId === $user->id)
                 <div class="flex items-center gap-ui">
                   <span class="text-xs text-red-600 dark:text-red-400">{{ __('Sure?') }}</span>
                   <flux:button wire:click="delete" variant="danger" size="sm">{{ __('Delete') }}</flux:button>
                   <flux:button wire:click="cancelDelete" variant="ghost" size="sm">{{ __('Cancel') }}</flux:button>
                 </div>
-              @elseif ($user->id !== auth()->id())
+              @elseif ($canDelete)
                 <flux:button wire:click="confirmDelete({{ $user->id }})" variant="ghost" square size="sm" aria-label="{{ __('Delete user') }}">
                   <flux:icon.trash class="size-4 text-red-500" />
                 </flux:button>
+              @else
+                <div class="size-7"></div>
               @endif
             </div>
           </li>
