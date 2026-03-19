@@ -16,9 +16,6 @@ class ViewServiceProvider extends ServiceProvider
         Blade::anonymousComponentPath(resource_path('views/web/components'), 'web');
         View::addNamespace('web', resource_path('views/web'));
 
-        Blade::anonymousComponentPath(resource_path('views/portal/components'), 'portal');
-        View::addNamespace('portal', resource_path('views/portal'));
-
         View::addNamespace('common', resource_path('views/common'));
 
         Blade::anonymousComponentPath(

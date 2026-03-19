@@ -12,9 +12,6 @@ use Illuminate\Support\Facades\Schedule;
 Schedule::command('horizon:snapshot')
     ->everyFiveMinutes();
 
-Schedule::command('app:stats:clear-cache')
-    ->hourly();
-
 Schedule::job(new SyncRecipesJob(true))
     ->weekly();
 Schedule::job(new SyncRecipesJob())
